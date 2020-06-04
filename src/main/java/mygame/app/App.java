@@ -22,6 +22,7 @@ public class App
         int numHealthPotions = 3;
         int healthPotionHealAmount = 30;
         int healthPotionDropChance = 50; // Percentage
+        int numEnemiesDefeated = 0;
 
         // Game text output
         boolean running = true;
@@ -96,8 +97,11 @@ public class App
             }
 
             // Fight result
+            numEnemiesDefeated++;
             System.out.println("----------------------------------------");
             System.out.println(" # " + enemy + " was defeated! # ");
+            System.out.print(" # You have defeated " + numEnemiesDefeated + " ");
+            System.out.println((numEnemiesDefeated == 1) ? "enemy so far! # " : "enemies so far! # ");
             System.out.println(" # You have " + health + " HP left. #");
 
             // Health potion potential drop
@@ -133,6 +137,7 @@ public class App
         }
 
         // Exit game
+        System.out.println("\nTotal Enemies Defeated: " + numEnemiesDefeated);
         System.out.println("\n#######################");
         System.out.println("# THANKS FOR PLAYING! #");
         System.out.println("#######################");
