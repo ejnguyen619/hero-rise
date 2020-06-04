@@ -23,7 +23,7 @@ When enemies are defeated in battle, there is the possibility of getting additio
 
 ## Strategy
 
-If you don't feel confident you can win the battle, it is wise to run away and try a different monster to fight.
+If you don't feel confident you can win the battle, it is wise to run away and try a different monster to fight. While there is only a limited number of times you can run, get more by defeating every set number of enemies.
 
 ## After Combat
 

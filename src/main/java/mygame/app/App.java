@@ -23,6 +23,7 @@ public class App
         int healthPotionHealAmount = 30;
         int healthPotionDropChance = 50; // Percentage
         int numEnemiesDefeated = 0;
+        int numRunAttempts = 3;
 
         // Game text output
         boolean running = true;
@@ -81,8 +82,14 @@ public class App
                 } 
                 // Leave current battle
                 else if(input.equals("3")){
-                    System.out.println("\tYou run away from the " + enemy + "!");
-                    continue GAME;
+                    if(numRunAttempts> 0){
+                       numRunAttempts--;
+                       System.out.println("\t> You ran away from the " + enemy + "!");
+                       System.out.println("\t> You have " + numRunAttempts + " runs remaining.");
+                       continue GAME;
+                    } else {
+                        System.out.println("\t> You have no runs! Defeat enemies to get more!");
+                    }
                 } 
                 // Error check for input
                 else {
@@ -100,8 +107,9 @@ public class App
             numEnemiesDefeated++;
             System.out.println("----------------------------------------");
             System.out.println(" # " + enemy + " was defeated! # ");
-            System.out.print(" # You have defeated " + numEnemiesDefeated + " ");
+            System.out.print(" # You have defeated " + numEnemiesDefeated + " "); 
             System.out.println((numEnemiesDefeated == 1) ? "enemy so far! # " : "enemies so far! # ");
+            if(numEnemiesDefeated % 5 == 0) System.out.println(" # You have gained a run attempt!");
             System.out.println(" # You have " + health + " HP left. #");
 
             // Health potion potential drop
