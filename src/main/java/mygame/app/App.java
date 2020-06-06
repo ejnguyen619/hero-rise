@@ -7,6 +7,7 @@ public class App
 {
     public static void main( String[] args )
     {
+
         // System objects
         Scanner sc = new Scanner(System.in);
         Random rand = new Random();
@@ -70,10 +71,19 @@ public class App
                 } 
                 // Consume health potion
                 else if(input.equals("2")){
+                    if(health == 100) {
+                        System.out.println("\t> You are in max health!");
+                        continue;
+                    }
                     if(numHealthPotions > 0){
+                        int difference;
                         health += healthPotionHealAmount;
+                        difference = health - 100;
+                        if(difference > 0) {
+                            health = 100;
+                        }
                         numHealthPotions--;
-                        System.out.println("\t> You drink a health potion, healing yourself for " + healthPotionHealAmount + ".");
+                        System.out.println("\t> You drink a health potion, healing yourself for " + difference + ".");
                         System.out.println("\t> You now have " + health + " HP.");
                         System.out.println("\t> You have " + numHealthPotions + " health potions left.");
                     } else {

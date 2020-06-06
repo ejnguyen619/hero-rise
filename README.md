@@ -1,30 +1,53 @@
 # Hero-Rise
 
-A text-based Role Playing Game (RPG) in Java.
-
+An adventure Role Playing Game (RPG) in Java. The goal is to defeat as many enemies as possible, proving your status as a hero.
+  
 
 # Main Features
+  
+## Player Input
+
+All player actions are determined by a set of choices shown on the screen. The player must make a choice by entering the corresponding number.
 
 ## Combat
 
-Relive the nostalgic days of classic RPGs like **FINAL FANTASY** where the main player must progress by defeating enemies. The goal is to lower the enemy's health to 0 Hit Points (HP). If your character reaches 0 HP, it is **GAME OVER!**
+Relive the nostalgic days of classic RPGs like **FINAL FANTASY** where the main player must progress by defeating enemies in a turn-based system. The player has the options whether to attack, use a health potion, or run away.
 
-## Player Input
+### Damage
 
-All player actions are determined by a set of provided choices. The main player must make a choice by entering the corresponding number.
+Damage is calculated by using a Random Number Generator (RNG).
 
-## Use items in battle
+### Use Items in Battle
 
-If the character's HP is running low, use a health potion to turn the tides of battle.
+If your character's HP is running low, use a health potion to turn the tides of battle.
 
-## Drop Rate
-
-When enemies are defeated in battle, there is the possibility of getting additional items like an extra health potion.
-
-## Strategy
+### Running Away
 
 If you don't feel confident you can win the battle, it is wise to run away and try a different monster to fight. While there is only a limited number of times you can run, get more by defeating every set number of enemies.
 
-## After Combat
+### After Combat
 
-Keep track of how many enemies are defeated so far. Try to get as many kills as possible!
+When enemies are defeated in battle, there is the possibility of getting additional items like an extra health potion.  
+
+
+# Future Updates (No particular order)
+
+## Restructure source code
+
+This involves adding methods and classes.
+
+## Add story events
+
+Focus on story-driven events outside of combat to simulate an adventure.
+
+## Refine gameplay system
+
+This consists of many features that RPGs tend to have. Specific features will be added at later dates.
+
+## Implement GUI
+
+Replace the text-based aspect with a visual such that users can interact with the game with mouse clicks.
+
+## Security
+
+Implement object-oriented design using design patterns.
