@@ -83,8 +83,9 @@ public class App
                 System.out.println("\t" + enemy + "'s HP: " + enemyHealth);
                 System.out.println("\n\tWhat would you like to do?");
                 System.out.println("\t1. Attack");
-                System.out.println("\t2. Drink health potion");
-                System.out.println("\t3. Run");
+                System.out.println("\t2. Defend");
+                System.out.println("\t3. Drink health potion");
+                System.out.println("\t4. Run");
 
                 String input = sc.nextLine();
 
@@ -92,12 +93,16 @@ public class App
                 if(input.equals("1")){
                     damage();
                 } 
-                // Consume health potion
+                // Perform counter attack
                 else if(input.equals("2")){
-                    healthPotion();
+                    counter();
                 } 
-                // Leave current battle
+                // Consume health potion
                 else if(input.equals("3")){
+                    healthPotion();
+                }
+                // Leave current battle
+                else if(input.equals("4")){
                     if(run() == true) continue GAME;
                 } 
                 // Error check for input
@@ -144,6 +149,8 @@ public class App
         System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage.");
         enemyHealth -= damageDealt;
 
+        if(enemyHealth <= 0) return;
+
         // Damage inflicted to player calculation
         if(rand.nextInt(100) < dodgeChance){
             damageTaken = 0;
@@ -155,6 +162,25 @@ public class App
 
         health -= damageTaken;
         System.out.println("\t> The " + enemy + " dealt you " + damageTaken + " damage in retaliation.");
+    }
+
+    // Counter attack
+    public void counter(){
+        System.out.println("\t> You have taken a defensive stance.");
+
+        int damageTaken = 0;
+        while(damageTaken < 1) damageTaken = rand.nextInt(enemyAttackDamage/2);
+        health -= damageTaken;
+        System.out.println("\t> The " + enemy + " dealt you " + damageTaken + " damage.");
+
+        int damageDealt = 0;
+        while(damageDealt < 1) damageDealt = rand.nextInt(attackDamage/2);
+        if(rand.nextInt(100) < criticalChance){
+            damageDealt *= 1.5;
+            System.out.println("\t> CRITICAL HIT!");
+        }
+        enemyHealth -= damageDealt;
+        System.out.println("\t> You strike the " + enemy + " back for " + damageDealt + " damage.");
     }
 
     // Drink health potion
