@@ -15,7 +15,7 @@ Relive the nostalgic days of classic RPGs like **FINAL FANTASY** where the main 
 
 ### Damage
 
-Damage is calculated by using a Random Number Generator (RNG).
+Damage is calculated by using a Random Number Generator (RNG). Choose between attacking directly or defending to make a counter attack.
 
 ### Use Items in Battle
 

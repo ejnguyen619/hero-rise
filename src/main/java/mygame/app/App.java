@@ -55,11 +55,11 @@ public class App
         attackDamage = 50;
         numHealthPotions = 3;
         healthPotionHealAmount = 30;
-        healthPotionDropChance = 50; // Percentage
+        healthPotionDropChance = 30; // Percentage
         numEnemiesDefeated = 0;
         numRunAttempts = 3;
-        criticalChance = 25;
-        dodgeChance = 25;
+        criticalChance = 15;
+        dodgeChance = 15;
     }
 
     // Game text output
@@ -72,10 +72,17 @@ public class App
             System.out.println("----------------------------------------");
 
             // Determine enemy health and monster type
-            enemyHealth = 0;
-            while(enemyHealth < 10) enemyHealth = rand.nextInt(maxEnemyHealth);
             enemy = enemies[rand.nextInt(enemies.length)];
             System.out.println("\t# " + enemy + " has appeared! #\n");
+
+            int healthBonus;
+            if(enemy.equals("Zombie")) healthBonus = 5;
+            else if(enemy.equals("Warrior")) healthBonus = 10;
+            else if(enemy.equals("Assassin")) healthBonus = -10;
+            else healthBonus = 0;
+            enemyHealth = 0;
+            while(enemyHealth < 10) enemyHealth = rand.nextInt(maxEnemyHealth + healthBonus);
+            if(healthBonus > 0) enemyHealth += healthBonus;
 
             // Fight information and player choices
             while(enemyHealth > 0 && health > 0){
@@ -132,13 +139,31 @@ public class App
     // Damage Calculation
     public void damage(){     
 
+        int attackBonus = 0;
+        int critBonus = 0;
+        int dodgeBonus = 0;
+
+        if(enemy.equals("Zombie")){
+            attackBonus = -5;
+            dodgeBonus = -5;
+        } else if(enemy.equals("Warrior")){
+            attackBonus = 10;
+            critBonus = -10;
+            dodgeBonus = -10;           
+        } else if(enemy.equals("Assassin")){
+            attackBonus = -5;
+            critBonus = 20;
+            dodgeBonus = 30;           
+        }
+
         int damageDealt = 0;
         while(damageDealt < 1) damageDealt = rand.nextInt(attackDamage);
         int damageTaken = 0;
-        while(damageTaken < 1) damageTaken = rand.nextInt(enemyAttackDamage);
+        while(damageTaken < 1) damageTaken = rand.nextInt(enemyAttackDamage + attackBonus);
+        if(attackBonus > 0) damageTaken += attackBonus;
 
         // Damage inflicted to enemy calculation
-        if(rand.nextInt(100) < enemyDodgeChance){
+        if(rand.nextInt(100) < enemyDodgeChance + dodgeBonus){
             damageDealt = 0;
             System.out.println("\t> MISS!");
         } else if(rand.nextInt(100) < criticalChance){
@@ -155,7 +180,7 @@ public class App
         if(rand.nextInt(100) < dodgeChance){
             damageTaken = 0;
             System.out.println("\t> MISS!");
-        } else if(rand.nextInt(100) < enemyCritChance){
+        } else if(rand.nextInt(100) < enemyCritChance + critBonus){
             damageTaken *= 1.5;
             System.out.println("\t> CRITICAL HIT!");
         }
@@ -168,8 +193,17 @@ public class App
     public void counter(){
         System.out.println("\t> You have taken a defensive stance.");
 
+        int attackBonus = 0;
+        if(enemy.equals("Zombie")){
+            attackBonus = -5;
+        } else if(enemy.equals("Warrior")){
+            attackBonus = 10;          
+        } else if(enemy.equals("Assassin")){
+            attackBonus = -5;          
+        }
+
         int damageTaken = 0;
-        while(damageTaken < 1) damageTaken = rand.nextInt(enemyAttackDamage/2);
+        while(damageTaken < 1) damageTaken = rand.nextInt((enemyAttackDamage + attackBonus)/2);
         health -= damageTaken;
         System.out.println("\t> The " + enemy + " dealt you " + damageTaken + " damage.");
 
