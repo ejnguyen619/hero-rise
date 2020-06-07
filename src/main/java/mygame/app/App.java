@@ -31,7 +31,7 @@ public class App
         App game = new App();
         game.setup();
         game.start();
-        game.result();
+        game.end();
     }
 
     // Initialize variables
@@ -108,40 +108,13 @@ public class App
             }
 
             // Fight result
-            numEnemiesDefeated++;
-            System.out.println("----------------------------------------");
-            System.out.println(" # " + enemy + " was defeated! # ");
-            System.out.print(" # You have defeated " + numEnemiesDefeated + " "); 
-            System.out.println((numEnemiesDefeated == 1) ? "enemy so far! # " : "enemies so far! # ");
-            if(numEnemiesDefeated % 5 == 0) System.out.println(" # You have gained a run attempt!");
-            System.out.println(" # You have " + health + " HP left. #");
+            fightResult();
 
             // Health potion potential drop
             healthDrop();
 
             // Decide action after fight conclusion
-            System.out.println("----------------------------------------");
-            System.out.println("What would you like to do now?");
-            System.out.println("1. Continue fighting");
-            System.out.println("2. Exit dungeon");
-
-            // Error check for input
-            String input = sc.nextLine();
-            while(!input.equals("1") && !input.equals("2")){
-                System.out.println("Invalid command!");
-                System.out.println("\nWhat would you like to do now?");
-                System.out.println("1. Continue fighting");
-                System.out.println("2. Exit dungeon");
-                input = sc.nextLine();
-            }
-
-            // Continue or leave dungeon
-            if(input.equals("1")){
-                System.out.println("You continue on your adventure!");
-            } else if(input.equals("2")){
-                System.out.println("You exit the dungeon, successful from your adventure!");
-                break;
-            }
+            if(nextAction() == 2) break;
         }
     }
 
@@ -193,6 +166,17 @@ public class App
         }
     }
 
+    // Fight result
+    public void fightResult(){
+        numEnemiesDefeated++;
+        System.out.println("----------------------------------------");
+        System.out.println(" # " + enemy + " was defeated! # ");
+        System.out.print(" # You have defeated " + numEnemiesDefeated + " "); 
+        System.out.println((numEnemiesDefeated == 1) ? "enemy so far! # " : "enemies so far! # ");
+        if(numEnemiesDefeated % 5 == 0) System.out.println(" # You have gained a run attempt!");
+        System.out.println(" # You have " + health + " HP left. #");
+    }
+
     // Health potion drop
     public void healthDrop(){
         if(rand.nextInt(100) < healthPotionDropChance){
@@ -202,8 +186,34 @@ public class App
         }
     }
 
+    // After combat options
+    public int nextAction(){
+        System.out.println("----------------------------------------");
+        System.out.println("What would you like to do now?");
+        System.out.println("1. Continue fighting");
+        System.out.println("2. Exit dungeon");
+
+        // Error check for input
+        String input = sc.nextLine();
+        while(!input.equals("1") && !input.equals("2")){
+            System.out.println("Invalid command!");
+            System.out.println("\nWhat would you like to do now?");
+            System.out.println("1. Continue fighting");
+            System.out.println("2. Exit dungeon");
+            input = sc.nextLine();
+        }
+
+        // Continue or leave dungeon
+        if(input.equals("1")){
+            System.out.println("You continue on your adventure!");
+        } else if(input.equals("2")){
+            System.out.println("You exit the dungeon, successful from your adventure!");
+        }
+        return Integer.parseInt(input);
+    }
+     
     // Exit game
-    public void result(){
+    public void end(){
         
         System.out.println("\nTotal Enemies Defeated: " + numEnemiesDefeated);
         System.out.println("\n#######################");
