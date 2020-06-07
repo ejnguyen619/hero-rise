@@ -63,11 +63,9 @@ public class App
         while(true){
             System.out.println("----------------------------------------");
 
+            // Determine enemy health and monster type
             enemyHealth = rand.nextInt(maxEnemyHealth);
-            while(enemyHealth == 0){
-                enemyHealth = rand.nextInt(maxEnemyHealth);
-            }
-
+            while(enemyHealth == 0) enemyHealth = rand.nextInt(maxEnemyHealth);
             enemy = enemies[rand.nextInt(enemies.length)];
             System.out.println("\t# " + enemy + " has appeared! #\n");
 
