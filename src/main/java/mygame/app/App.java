@@ -16,6 +16,7 @@ public class App
     int enemyHealth;
     String enemy;
     int enemyCritChance;
+    int enemyDodgeChance;
 
     // Player variables
     int health;
@@ -26,6 +27,7 @@ public class App
     int numEnemiesDefeated;
     int numRunAttempts;
     int criticalChance;
+    int dodgeChance;
     
     public static void main( String[] args )
     {
@@ -46,6 +48,7 @@ public class App
         maxEnemyHealth = 75;
         enemyAttackDamage = 25;
         enemyCritChance = 10;
+        enemyDodgeChance = 10;
 
         // Player variables
         health = 100;
@@ -56,6 +59,7 @@ public class App
         numEnemiesDefeated = 0;
         numRunAttempts = 3;
         criticalChance = 25;
+        dodgeChance = 25;
     }
 
     // Game text output
@@ -68,8 +72,8 @@ public class App
             System.out.println("----------------------------------------");
 
             // Determine enemy health and monster type
-            enemyHealth = rand.nextInt(maxEnemyHealth);
-            while(enemyHealth == 0) enemyHealth = rand.nextInt(maxEnemyHealth);
+            enemyHealth = 0;
+            while(enemyHealth < 10) enemyHealth = rand.nextInt(maxEnemyHealth);
             enemy = enemies[rand.nextInt(enemies.length)];
             System.out.println("\t# " + enemy + " has appeared! #\n");
 
@@ -121,11 +125,18 @@ public class App
     }
 
     // Damage Calculation
-    public void damage(){
-        int damageDealt = rand.nextInt(attackDamage);
-        int damageTaken = rand.nextInt(enemyAttackDamage);
+    public void damage(){     
 
-        if(rand.nextInt(100) < criticalChance){
+        int damageDealt = 0;
+        while(damageDealt < 1) damageDealt = rand.nextInt(attackDamage);
+        int damageTaken = 0;
+        while(damageTaken < 1) damageTaken = rand.nextInt(enemyAttackDamage);
+
+        // Damage inflicted to enemy calculation
+        if(rand.nextInt(100) < enemyDodgeChance){
+            damageDealt = 0;
+            System.out.println("\t> MISS!");
+        } else if(rand.nextInt(100) < criticalChance){
             damageDealt *= 1.5;
             System.out.println("\t> CRITICAL HIT!");
         }
@@ -133,13 +144,16 @@ public class App
         System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage.");
         enemyHealth -= damageDealt;
 
-        if(rand.nextInt(100) < enemyCritChance){
+        // Damage inflicted to player calculation
+        if(rand.nextInt(100) < dodgeChance){
+            damageTaken = 0;
+            System.out.println("\t> MISS!");
+        } else if(rand.nextInt(100) < enemyCritChance){
             damageTaken *= 1.5;
             System.out.println("\t> CRITICAL HIT!");
         }
 
         health -= damageTaken;
-
         System.out.println("\t> The " + enemy + " dealt you " + damageTaken + " damage in retaliation.");
     }
 
@@ -186,7 +200,11 @@ public class App
         System.out.println(" # " + enemy + " was defeated! # ");
         System.out.print(" # You have defeated " + numEnemiesDefeated + " "); 
         System.out.println((numEnemiesDefeated == 1) ? "enemy so far! # " : "enemies so far! # ");
-        if(numEnemiesDefeated % 5 == 0) System.out.println(" # You have gained a run attempt!");
+        if(numEnemiesDefeated % 5 == 0) {
+            System.out.println(" # You have gained a run attempt!");
+            numRunAttempts++;
+            System.out.println(" # You have " + numRunAttempts + " runs remaining.");
+        }
         System.out.println(" # You have " + health + " HP left. #");
     }
 
