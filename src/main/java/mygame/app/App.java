@@ -15,6 +15,7 @@ public class App
     int enemyAttackDamage;
     int enemyHealth;
     String enemy;
+    int enemyCritChance;
 
     // Player variables
     int health;
@@ -24,6 +25,7 @@ public class App
     int healthPotionDropChance; // Percentage
     int numEnemiesDefeated;
     int numRunAttempts;
+    int criticalChance;
     
     public static void main( String[] args )
     {
@@ -43,6 +45,7 @@ public class App
         // Enemy variables
         maxEnemyHealth = 75;
         enemyAttackDamage = 25;
+        enemyCritChance = 10;
 
         // Player variables
         health = 100;
@@ -52,6 +55,7 @@ public class App
         healthPotionDropChance = 50; // Percentage
         numEnemiesDefeated = 0;
         numRunAttempts = 3;
+        criticalChance = 25;
     }
 
     // Game text output
@@ -121,11 +125,22 @@ public class App
         int damageDealt = rand.nextInt(attackDamage);
         int damageTaken = rand.nextInt(enemyAttackDamage);
 
+        if(rand.nextInt(100) < criticalChance){
+            damageDealt *= 1.5;
+            System.out.println("\t> CRITICAL HIT!");
+        }
+        
+        System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage.");
         enemyHealth -= damageDealt;
+
+        if(rand.nextInt(100) < enemyCritChance){
+            damageTaken *= 1.5;
+            System.out.println("\t> CRITICAL HIT!");
+        }
+
         health -= damageTaken;
 
-        System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage.");
-        System.out.println("\t> You receive " + damageTaken + " in retaliation.");
+        System.out.println("\t> The " + enemy + " dealt you " + damageTaken + " damage in retaliation.");
     }
 
     // Drink health potion
