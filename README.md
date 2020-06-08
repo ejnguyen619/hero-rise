@@ -11,11 +11,11 @@ All player actions are determined by a set of choices shown on the screen. The p
 
 ## Combat
 
-Relive the nostalgic days of classic RPGs like **FINAL FANTASY** where the main player must progress by defeating enemies in a turn-based system. The player has the options whether to attack, use a health potion, or run away.
+Relive the nostalgic days of classic RPGs like **FINAL FANTASY** where the main player must progress by defeating enemies in a turn-based system. The enemies become progressingly stronger as more enemies are defeated.
 
 ### Damage
 
-Damage is calculated by using a Random Number Generator (RNG). Choose between attacking directly or defending to make a counter attack.
+Damage is calculated by using a Random Number Generator (RNG). Choose between attacking directly, defending, or making a counter attack.
 
 ### Use Items in Battle
 

@@ -117,8 +117,16 @@ public class App
                 }
                 // Leave current battle
                 else if(input.equals("5")){
-                    if(run() == true) continue GAME;
-                }  
+                    if(run()) continue GAME;
+                }
+                // Check status
+                else if(input.equals("6")){
+                    status();
+                }
+                // Check command descriptions
+                else if(input.equals("7")){
+                    help();
+                }                 
                 // Error check for input
                 else {
                     System.out.println("\tInvalid command!");
@@ -195,6 +203,32 @@ public class App
         System.out.println("\t3. Counter");
         System.out.println("\t4. Drink health potion");
         System.out.println("\t5. Run");
+        System.out.println("\t6. Status");
+        System.out.println("\t7. Help");
+    }
+
+    // Check command descriptions
+    public void help(){
+        System.out.println("\t1. Attack:");
+        System.out.println("\t   Attack the enemy first.");
+        System.out.println("\t2. Defend:");
+        System.out.println("\t   Enemy attacks first. Player receives half damage. Player attack hits.");
+        System.out.println("\t3. Counter:");
+        System.out.println("\t   Player dodge rate up. Enemy attacks first. If enemy attack misses, player performs critical hit.");
+        System.out.println("\t4. Drink health potion:");
+        System.out.println("\t   Consume a potion to recover HP.");
+        System.out.println("\t5. Run:");
+        System.out.println("\t   Leave current battle.");
+        System.out.println("\t6. Status:");
+        System.out.println("\t   Check inventory for number of items.");
+        System.out.println("\t7. Help:");
+        System.out.println("\t   Look up command descriptions.\n");
+    }
+
+    // Check status
+    public void status(){
+        System.out.println("\tYou have " + numHealthPotions + " health potions remaining.");
+        System.out.println("\tYou have " + numRunAttempts + " runs remaining.");
     }
 
     // Generate damage value
