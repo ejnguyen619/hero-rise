@@ -30,13 +30,17 @@ public class App
     int numRunAttempts;
     int criticalChance;
     int dodgeChance;
+    String name;
     
     public static void main( String[] args )
     {
         // Start adventure
         App game = new App();
-        game.setup();
-        game.start();
+        while(true){
+            game.setup();
+            game.start();
+            if(game.gameOver() == 2) break;
+        }
         game.end();
     }
 
@@ -69,7 +73,9 @@ public class App
     // Game text output
     public void start(){
 
-        System.out.println("\nWelcome to the Dungeon!");
+        System.out.println("\nPlease enter your name: ");
+        name = sc.nextLine();
+        System.out.println("Welcome to the Dungeon " + name + "!");
 
         GAME:
         while(true){
@@ -316,10 +322,30 @@ public class App
         return Integer.parseInt(input);
     }
      
+    // Game over screen
+    public int gameOver(){
+        String input;
+        while(true){
+            System.out.println("\nGAME OVER! What would you like to do?");
+            System.out.println("1. Try again");
+            System.out.println("2. Exit game");
+            input = sc.nextLine();
+            if(input.equals("1")){
+                System.out.println("It's go time!");
+                break;
+            } else if(input.equals("2")){
+                break;   
+            } else {
+                System.out.println("Invalid command!");
+            }
+        }
+        return Integer.parseInt(input);
+    }
+
     // Exit game
     public void end(){
         
-        System.out.println("\nTotal Enemies Defeated: " + numEnemiesDefeated);
+        System.out.println("\nTotal Enemies " + name + " Defeated: " + numEnemiesDefeated);
         System.out.println("\n#######################");
         System.out.println("# THANKS FOR PLAYING! #");
         System.out.println("#######################");
