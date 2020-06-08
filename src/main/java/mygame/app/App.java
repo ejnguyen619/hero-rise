@@ -17,6 +17,8 @@ public class App
     String enemy;
     int enemyCritChance;
     int enemyDodgeChance;
+    int minHealth;
+    int minAttack;
 
     // Player variables
     int health;
@@ -49,6 +51,8 @@ public class App
         enemyAttackDamage = 25;
         enemyCritChance = 10;
         enemyDodgeChance = 10;
+        minHealth = 10;
+        minAttack = 1;
 
         // Player variables
         health = 100;
@@ -81,8 +85,7 @@ public class App
             else if(enemy.equals("Assassin")) healthBonus = -10;
             else healthBonus = 0;
             enemyHealth = 0;
-            while(enemyHealth < 10) enemyHealth = rand.nextInt(maxEnemyHealth + healthBonus);
-            if(healthBonus > 0) enemyHealth += healthBonus;
+            while(enemyHealth < minHealth) enemyHealth = rand.nextInt(maxEnemyHealth) + healthBonus;
 
             // Fight information and player choices
             while(enemyHealth > 0 && health > 0){
@@ -159,8 +162,7 @@ public class App
         int damageDealt = 0;
         while(damageDealt < 1) damageDealt = rand.nextInt(attackDamage);
         int damageTaken = 0;
-        while(damageTaken < 1) damageTaken = rand.nextInt(enemyAttackDamage + attackBonus);
-        if(attackBonus > 0) damageTaken += attackBonus;
+        while(damageTaken < minAttack) damageTaken = rand.nextInt(enemyAttackDamage) + attackBonus;
 
         // Damage inflicted to enemy calculation
         if(rand.nextInt(100) < enemyDodgeChance + dodgeBonus){
@@ -261,11 +263,22 @@ public class App
         System.out.print(" # You have defeated " + numEnemiesDefeated + " "); 
         System.out.println((numEnemiesDefeated == 1) ? "enemy so far! # " : "enemies so far! # ");
         if(numEnemiesDefeated % 5 == 0) {
-            System.out.println(" # You have gained a run attempt!");
+            System.out.println(" # You have gained a run attempt! #");
             numRunAttempts++;
-            System.out.println(" # You have " + numRunAttempts + " runs remaining.");
+            System.out.println(" # You have " + numRunAttempts + " runs remaining. #");
+            difficulty();
         }
         System.out.println(" # You have " + health + " HP left. #");
+    }
+
+    // Increase difficulty as more enemies are defeated
+    public void difficulty(){
+        System.out.println(" # The enemies are getting stronger. Beware! #");
+        maxEnemyHealth += 5;
+        enemyAttackDamage += 5;
+        enemyCritChance += 5;
+        minHealth += 5;
+        minAttack += 2;
     }
 
     // Health potion drop
