@@ -19,6 +19,10 @@ public class App
     int enemyDodgeChance;
     int minHealth;
     int minAttack;
+    int attackBonus;
+    int critBonus;
+    int dodgeBonus;
+    int healthBonus;
 
     // Player variables
     int health;
@@ -73,54 +77,48 @@ public class App
     // Game text output
     public void start(){
 
-        System.out.println("\nPlease enter your name: ");
-        name = sc.nextLine();
-        System.out.println("Welcome to the Dungeon " + name + "!");
+        // Enter username
+        name();
 
         GAME:
         while(true){
             System.out.println("----------------------------------------");
 
             // Determine enemy health and monster type
-            enemy = enemies[rand.nextInt(enemies.length)];
-            System.out.println("\t# " + enemy + " has appeared! #\n");
+            enemyType();
 
-            int healthBonus;
-            if(enemy.equals("Zombie")) healthBonus = 5;
-            else if(enemy.equals("Warrior")) healthBonus = 10;
-            else if(enemy.equals("Assassin")) healthBonus = -10;
-            else healthBonus = 0;
-            enemyHealth = 0;
-            while(enemyHealth < minHealth) enemyHealth = rand.nextInt(maxEnemyHealth) + healthBonus;
+            // Apply bonus stats to modifier based on type of enemy
+            bonus();
+
+            // Generate enemy HP
+            generateEnemyHP();
 
             // Fight information and player choices
             while(enemyHealth > 0 && health > 0){
-                System.out.println("\tYour HP: " + health);
-                System.out.println("\t" + enemy + "'s HP: " + enemyHealth);
-                System.out.println("\n\tWhat would you like to do?");
-                System.out.println("\t1. Attack");
-                System.out.println("\t2. Defend");
-                System.out.println("\t3. Drink health potion");
-                System.out.println("\t4. Run");
+                fightInfo();
 
                 String input = sc.nextLine();
 
                 // Damage calculation
                 if(input.equals("1")){
-                    damage();
+                    attack();
                 } 
-                // Perform counter attack
+                // Defend from attack
                 else if(input.equals("2")){
-                    counter();
+                    defend();
                 } 
-                // Consume health potion
+                // Counter attack
                 else if(input.equals("3")){
+                    counter();
+                }
+                // Consume health potion
+                else if(input.equals("4")){
                     healthPotion();
                 }
                 // Leave current battle
-                else if(input.equals("4")){
+                else if(input.equals("5")){
                     if(run() == true) continue GAME;
-                } 
+                }  
                 // Error check for input
                 else {
                     System.out.println("\tInvalid command!");
@@ -128,11 +126,7 @@ public class App
             }
 
             // Player run out of health
-            if(health < 1){
-                System.out.println("\t> You have taken too much damage. You are too weak to go on!");
-                System.out.println("You limp out of the dungeon, weak from battle.");
-                break;
-            }
+            if(playerAlive() == false) break;
 
             // Fight result
             fightResult();
@@ -145,84 +139,177 @@ public class App
         }
     }
 
-    // Damage Calculation
-    public void damage(){     
-
-        int attackBonus = 0;
-        int critBonus = 0;
-        int dodgeBonus = 0;
-
-        if(enemy.equals("Zombie")){
-            attackBonus = -5;
-            dodgeBonus = -5;
-        } else if(enemy.equals("Warrior")){
-            attackBonus = 10;
-            critBonus = -10;
-            dodgeBonus = -10;           
-        } else if(enemy.equals("Assassin")){
-            attackBonus = -5;
-            critBonus = 20;
-            dodgeBonus = 30;           
-        }
-
-        int damageDealt = 0;
-        while(damageDealt < 1) damageDealt = rand.nextInt(attackDamage);
-        int damageTaken = 0;
-        while(damageTaken < minAttack) damageTaken = rand.nextInt(enemyAttackDamage) + attackBonus;
-
-        // Damage inflicted to enemy calculation
-        if(rand.nextInt(100) < enemyDodgeChance + dodgeBonus){
-            damageDealt = 0;
-            System.out.println("\t> MISS!");
-        } else if(rand.nextInt(100) < criticalChance){
-            damageDealt *= 1.5;
-            System.out.println("\t> CRITICAL HIT!");
-        }
-        
-        System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage.");
-        enemyHealth -= damageDealt;
-
-        if(enemyHealth <= 0) return;
-
-        // Damage inflicted to player calculation
-        if(rand.nextInt(100) < dodgeChance){
-            damageTaken = 0;
-            System.out.println("\t> MISS!");
-        } else if(rand.nextInt(100) < enemyCritChance + critBonus){
-            damageTaken *= 1.5;
-            System.out.println("\t> CRITICAL HIT!");
-        }
-
-        health -= damageTaken;
-        System.out.println("\t> The " + enemy + " dealt you " + damageTaken + " damage in retaliation.");
+    // Enter username
+    public void name(){
+        System.out.println("\nPlease enter your name: ");
+        name = sc.nextLine();
+        System.out.println("Welcome to the Dungeon " + name + "!");
     }
 
-    // Counter attack
-    public void counter(){
+    // Determine enemy health and monster type
+    public void enemyType(){
+        enemy = enemies[rand.nextInt(enemies.length)];
+        System.out.println("\t# " + enemy + " has appeared! #\n");
+    }
+
+    // Apply bonuses based on type of enemy
+    public void bonus(){
+        if(enemy.equals("Zombie")){
+            healthBonus = 5;
+            attackBonus = -5;
+            dodgeBonus = -5;
+        }
+        else if(enemy.equals("Warrior")){ 
+            healthBonus = 10;
+            attackBonus = 10;
+            critBonus = -10;
+            dodgeBonus = -10;  
+        }
+        else if(enemy.equals("Assassin")) { 
+            healthBonus = -10;
+            attackBonus = -5;
+            critBonus = 20;
+            dodgeBonus = 30; 
+        }
+        else {
+            healthBonus = 0;
+            attackBonus = 0;
+            critBonus = 0;
+            dodgeBonus = 0; 
+        }
+    }
+
+    // Generate enemy health
+    public void generateEnemyHP(){
+        enemyHealth = 0;
+        while(enemyHealth < minHealth) enemyHealth = rand.nextInt(maxEnemyHealth) + healthBonus;
+    }
+
+    // Fight screen
+    public void fightInfo(){
+        System.out.println("\tYour HP: " + health);
+        System.out.println("\t" + enemy + "'s HP: " + enemyHealth);
+        System.out.println("\n\tWhat would you like to do?");
+        System.out.println("\t1. Attack");
+        System.out.println("\t2. Defend");
+        System.out.println("\t3. Counter");
+        System.out.println("\t4. Drink health potion");
+        System.out.println("\t5. Run");
+    }
+
+    // Generate damage value
+    public int damage(int baseDamage, int bonus, int min){
+        int damage = 0;
+        while(damage < min) damage = rand.nextInt(baseDamage) + bonus;
+        return damage;
+    }
+
+    // Dodge calculation
+    public boolean dodge (int dodgeRate){
+        if(rand.nextInt(100) < dodgeRate) {
+            System.out.println("\t> MISS!");
+            return true;
+        } 
+        else return false;
+    }
+
+    // Critical calculation
+    public boolean critical (int criticalRate){
+        if(rand.nextInt(100) < criticalRate) {
+            System.out.println("\t> CRITICAL HIT!");
+            return true;
+        } 
+        else return false;
+    }
+
+    // Damage enemy
+    public void damageEnemy(int damage){
+        System.out.println("\t> You strike the " + enemy + " for " + damage + " damage.");
+        enemyHealth -= damage;
+    }
+
+    // Receive damage from enemy
+    public void takeDamage(int damage){
+        System.out.println("\t> The " + enemy + " dealt you " + damage + " damage.");
+        health -= damage;
+    }
+
+    // Check if player has no health
+    public boolean playerAlive(){
+        if(health < 1) {
+            System.out.println("\t> You have taken too much damage. You are too weak to go on!");
+            System.out.println("You limp out of the dungeon, weak from battle.");
+            return false;
+        }
+        else return true; 
+    }
+
+    // Check if enemy has no health
+    public boolean enemyAlive(){
+        if(enemyHealth < 1) {
+            return false;
+        }
+        else return true; 
+    }
+
+    // Attack enemy
+    public void attack(){
+        // Generate damage values for player and enemy     
+        int damageDealt = damage(attackDamage, 0, 1);
+        int damageTaken = damage(enemyAttackDamage, attackBonus, minAttack);
+
+        // Damage inflicted to enemy calculation
+        if(dodge(enemyDodgeChance + dodgeBonus)) damageDealt = 0;
+        else if(critical(criticalChance)) damageDealt *= 1.5;
+        damageEnemy(damageDealt);
+
+        if(!enemyAlive()) return;
+
+        // Damage inflicted to player calculation
+        if(dodge(dodgeChance)) damageTaken = 0;
+        else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
+        takeDamage(damageTaken);
+    }
+
+    // Defend attack
+    public void defend(){
         System.out.println("\t> You have taken a defensive stance.");
 
-        int attackBonus = 0;
-        if(enemy.equals("Zombie")){
-            attackBonus = -5;
-        } else if(enemy.equals("Warrior")){
-            attackBonus = 10;          
-        } else if(enemy.equals("Assassin")){
-            attackBonus = -5;          
-        }
+        // Generate damage values for player and enemy     
+        int damageDealt = damage(attackDamage, 0, 1);
+        int damageTaken = damage(enemyAttackDamage, attackBonus, minAttack)/2;
 
-        int damageTaken = 0;
-        while(damageTaken < 1) damageTaken = rand.nextInt((enemyAttackDamage + attackBonus)/2);
-        health -= damageTaken;
-        System.out.println("\t> The " + enemy + " dealt you " + damageTaken + " damage.");
+        // Damage inflicted to player calculation
+        takeDamage(damageTaken);
 
-        int damageDealt = 0;
-        while(damageDealt < 1) damageDealt = rand.nextInt(attackDamage/2);
-        if(rand.nextInt(100) < criticalChance){
+        if(!playerAlive()) return;
+
+        // Damage inflicted to enemy calculation
+        damageEnemy(damageDealt);
+    }
+
+    // Dodge and counter
+    public void counter(){
+        System.out.println("\t> You have taken an evasive stance.");
+
+        // Generate damage values for player and enemy     
+        int damageDealt = damage(attackDamage, 0, 1);
+        int damageTaken = damage(enemyAttackDamage, attackBonus, minAttack);
+
+        // Damage inflicted to player calculation
+        if(dodge(dodgeChance*3)) damageTaken = 0;
+        else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
+        takeDamage(damageTaken);
+
+        if(!playerAlive()) return;
+
+        // Damage inflicted to enemy calculation
+        if(dodge(enemyDodgeChance + dodgeBonus)) damageDealt = 0;
+        else if(damageTaken == 0) {
             damageDealt *= 1.5;
             System.out.println("\t> CRITICAL HIT!");
-        }
-        enemyHealth -= damageDealt;
-        System.out.println("\t> You strike the " + enemy + " back for " + damageDealt + " damage.");
+        } else if(critical(criticalChance)) damageDealt *= 1.5;
+        damageEnemy(damageDealt);
     }
 
     // Drink health potion
@@ -298,32 +385,32 @@ public class App
 
     // After combat options
     public int nextAction(){
-        System.out.println("----------------------------------------");
-        System.out.println("What would you like to do now?");
-        System.out.println("1. Continue fighting");
-        System.out.println("2. Exit dungeon");
 
         // Error check for input
-        String input = sc.nextLine();
-        while(!input.equals("1") && !input.equals("2")){
-            System.out.println("Invalid command!");
-            System.out.println("\nWhat would you like to do now?");
+        String input;
+        while(true){
+            System.out.println("----------------------------------------");
+            System.out.println("What would you like to do now?");
             System.out.println("1. Continue fighting");
             System.out.println("2. Exit dungeon");
             input = sc.nextLine();
-        }
-
-        // Continue or leave dungeon
-        if(input.equals("1")){
-            System.out.println("You continue on your adventure!");
-        } else if(input.equals("2")){
-            System.out.println("You exit the dungeon, successful from your adventure!");
+            if(input.equals("1")){
+                System.out.println("You continue on your adventure!");
+                break;
+            } else if(input.equals("2")){
+                System.out.println("You exit the dungeon, successful from your adventure!");
+                break;   
+            } else {
+                System.out.println("Invalid command!");
+            }
         }
         return Integer.parseInt(input);
     }
      
     // Game over screen
     public int gameOver(){
+
+        // Error check for input
         String input;
         while(true){
             System.out.println("\nGAME OVER! What would you like to do?");
@@ -344,7 +431,6 @@ public class App
 
     // Exit game
     public void end(){
-        
         System.out.println("\nTotal Enemies " + name + " Defeated: " + numEnemiesDefeated);
         System.out.println("\n#######################");
         System.out.println("# THANKS FOR PLAYING! #");
