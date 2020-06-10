@@ -23,9 +23,13 @@ public class App
     int critBonus;
     int dodgeBonus;
     int healthBonus;
+    int fullEnemyHealth;
 
     // Player variables
+    int maxHealth;
+    int maxMana;
     int health;
+    int mana;
     int attackDamage;
     int numHealthPotions;
     int healthPotionHealAmount;
@@ -72,6 +76,9 @@ public class App
         numRunAttempts = 3;
         criticalChance = 15;
         dodgeChance = 15;
+        mana = 50;
+        maxHealth = health;
+        maxMana = mana;
     }
 
     // Game text output
@@ -102,30 +109,22 @@ public class App
                 // Damage calculation
                 if(input.equals("1")){
                     attack();
-                } 
-                // Defend from attack
-                else if(input.equals("2")){
-                    defend();
-                } 
-                // Counter attack
-                else if(input.equals("3")){
-                    counter();
                 }
-                // Consume health potion
+                // Opens skills page
+                else if(input.equals("2")){
+                    skillScreen();
+                } 
+                // Opens items page
+                else if(input.equals("3")){
+                    itemScreen();
+                }
+                // Check descriptions of skills and items
                 else if(input.equals("4")){
-                    healthPotion();
+                    help();
                 }
                 // Leave current battle
                 else if(input.equals("5")){
                     if(run()) continue GAME;
-                }
-                // Check status
-                else if(input.equals("6")){
-                    status();
-                }
-                // Check command descriptions
-                else if(input.equals("7")){
-                    help();
                 }                 
                 // Error check for input
                 else {
@@ -191,44 +190,84 @@ public class App
     public void generateEnemyHP(){
         enemyHealth = 0;
         while(enemyHealth < minHealth) enemyHealth = rand.nextInt(maxEnemyHealth) + healthBonus;
+        fullEnemyHealth = enemyHealth;
     }
 
     // Fight screen
     public void fightInfo(){
-        System.out.println("\tYour HP: " + health);
-        System.out.println("\t" + enemy + "'s HP: " + enemyHealth);
+        System.out.println("\t" + name);
+        System.out.println("\tHP: " + health + "/" + maxHealth);
+        //System.out.println("\tMP: " + mana + "/" + maxMana);
+        System.out.println("\n\t" + enemy);
+        System.out.println("\tHP: " + enemyHealth + "/" + fullEnemyHealth);
         System.out.println("\n\tWhat would you like to do?");
         System.out.println("\t1. Attack");
-        System.out.println("\t2. Defend");
-        System.out.println("\t3. Counter");
-        System.out.println("\t4. Drink health potion");
+        System.out.println("\t2. Skills");
+        System.out.println("\t3. Items");
+        System.out.println("\t4. Help");
         System.out.println("\t5. Run");
-        System.out.println("\t6. Status");
-        System.out.println("\t7. Help");
     }
 
-    // Check command descriptions
+    // Skills screen
+    public void skillScreen(){
+        String input;
+        while(true) {
+            System.out.println("----------------------------------------");
+            System.out.println("\tSkills:");
+            System.out.println("\t1. Guardian Strike");
+            System.out.println("\t2. Counter Force");
+            System.out.println("\t3. Cancel");
+            input = sc.nextLine();
+            if(input.equals("1")){
+                defend();
+                break;
+            } else if(input.equals("2")){
+                counter();
+                break;   
+            } else if(input.equals("3")){
+                System.out.println("----------------------------------------");
+                break;   
+            }  
+            else {
+                System.out.println("Invalid command!");
+            }
+        }
+    }
+
+    // Items screen
+    public void itemScreen(){
+        String input;
+        while(true) {
+            System.out.println("----------------------------------------");
+            System.out.println("\tItems:");
+            System.out.println("\t1. Health potion:   " + "x" + numHealthPotions);
+            System.out.println("\t2. Cancel");
+            input = sc.nextLine();
+            if(input.equals("1")){
+                healthPotion();
+                break;
+            } else if(input.equals("2")){
+                System.out.println("----------------------------------------");
+                break;   
+            } 
+            else {
+                System.out.println("Invalid command!");
+            }
+        }
+    }
+
+    // Check descriptions of skills and items
     public void help(){
-        System.out.println("\t1. Attack:");
-        System.out.println("\t   Attack the enemy first.");
-        System.out.println("\t2. Defend:");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("\tSkills:");
+        System.out.println("\t1. Guardian Strike:");
         System.out.println("\t   Enemy attacks first. Player receives half damage. Player attack hits.");
-        System.out.println("\t3. Counter:");
+        System.out.println("\t2. Counter Force:");
         System.out.println("\t   Player dodge rate up. Enemy attacks first. If enemy attack misses, player performs critical hit.");
-        System.out.println("\t4. Drink health potion:");
-        System.out.println("\t   Consume a potion to recover HP.");
-        System.out.println("\t5. Run:");
-        System.out.println("\t   Leave current battle.");
-        System.out.println("\t6. Status:");
-        System.out.println("\t   Check inventory for number of items.");
-        System.out.println("\t7. Help:");
-        System.out.println("\t   Look up command descriptions.\n");
-    }
-
-    // Check status
-    public void status(){
-        System.out.println("\tYou have " + numHealthPotions + " health potions remaining.");
-        System.out.println("\tYou have " + numRunAttempts + " runs remaining.");
+        System.out.println("\n\tItems:");
+        System.out.println("\t1. Health Potion:");
+        System.out.println("\t   Recovers 30HP.");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
     }
 
     // Generate damage value
@@ -305,9 +344,11 @@ public class App
         takeDamage(damageTaken);
     }
 
-    // Defend attack
+    // Player uses Guardian Force
     public void defend(){
+        System.out.println("\t> You used Guardian Strike! ");
         System.out.println("\t> You have taken a defensive stance.");
+        System.out.println("\t> Your defense goes up!");
 
         // Generate damage values for player and enemy     
         int damageDealt = damage(attackDamage, 0, 1);
@@ -322,9 +363,11 @@ public class App
         damageEnemy(damageDealt);
     }
 
-    // Dodge and counter
+    // Player uses Counter Force
     public void counter(){
+        System.out.println("\t> You used Counter Force! ");
         System.out.println("\t> You have taken an evasive stance.");
+        System.out.println("\t> Your critical rate goes up!");
 
         // Generate damage values for player and enemy     
         int damageDealt = damage(attackDamage, 0, 1);
@@ -349,7 +392,7 @@ public class App
     // Drink health potion
     public void healthPotion(){
         if(health == 100) {
-            System.out.println("\t> You are in max health!");
+            System.out.println("\t> You have max health!");
             return;
         }
         if(numHealthPotions > 0){
@@ -371,15 +414,33 @@ public class App
 
     // Run away from battle
     public boolean run(){
-        if(numRunAttempts> 0){
-            numRunAttempts--;
-            System.out.println("\t> You ran away from the " + enemy + "!");
-            System.out.println("\t> You have " + numRunAttempts + " runs remaining.");
-            return true;
+        String input;
+        boolean runAway = false;
+        if(numRunAttempts > 0){
+            while(true){
+                System.out.println("\tYou have " + numRunAttempts + " runs remaining.");
+                System.out.println("\tAre you sure that you want to run away from this battle?");
+                System.out.println("\t1. Yes");
+                System.out.println("\t2. No");
+                input = sc.nextLine();
+                if(input.equals("1")){
+                    numRunAttempts--;
+                    System.out.println("\t> You ran away from the " + enemy + "!");
+                    System.out.println("\t> You have " + numRunAttempts + " runs remaining.");
+                    runAway = true;
+                    break;
+                } else if(input.equals("2")){
+                    System.out.println("----------------------------------------");
+                    break;   
+                } 
+                else {
+                    System.out.println("Invalid command!");
+                }
+            }
         } else {
-            System.out.println("\t> You have no runs! Defeat enemies to get more!");
-            return false;
+            System.out.println("\tYou have no runs! Defeat enemies to get more!");
         }
+        return runAway;
     }
 
     // Fight result

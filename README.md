@@ -13,17 +13,25 @@ All player actions are determined by a set of choices shown on the screen. The p
 
 Relive the nostalgic days of classic RPGs like **FINAL FANTASY** where the main player must progress by defeating enemies in a turn-based system. The enemies become progressingly stronger as more enemies are defeated.
 
+### Skills
+
+Use powerful skills to gain an edge over the enemy! They are accessed by opening the skills page.
+
 ### Damage
 
-Damage is calculated by using a Random Number Generator (RNG). Choose between attacking directly, defending, or making a counter attack.
+Damage is calculated by using a Random Number Generator (RNG).
 
 ### Use Items in Battle
 
-If your character's HP is running low, use a health potion to turn the tides of battle.
+Use items to turn the tides of battle. For example, use a health potion when your HP is getting low. Items can be accessed from the items page.
 
 ### Running Away
 
 If you don't feel confident you can win the battle, it is wise to run away and try a different monster to fight. While there is only a limited number of times you can run, get more by defeating every set number of enemies.
+
+### Help
+
+If you need more information about certain skills and items, access the help page.
 
 ### After Combat
 
