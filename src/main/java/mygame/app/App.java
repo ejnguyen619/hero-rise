@@ -399,6 +399,30 @@ public class App
         deadlyAttack = false;       
     }
 
+    // Checks enemy action
+    public void enemyAction(int damage, int dodge, int crit, boolean half){
+        // Check for super move
+        if(enemy.equals("Dragon")){
+            if(deadlyAttack == false){
+                if(fireCharge() == false){
+                    // Damage inflicted to player calculation
+                    if(dodge(dodge)) damage = 0;
+                    else if(critical(crit)) damage *= 1.5;
+                    takeDamage(damage);
+                }
+            } else {
+                System.out.println("\t> Dragon unleashes a deadly fire blast!");
+                if(dodge(dodge)) damage = 0;
+                else fireBlast((!half) ? 50 : 25);
+            }
+        } else {
+            // Damage inflicted to player calculation
+            if(dodge(dodge)) damage = 0;
+            else if(critical(crit)) damage *= 1.5;
+            takeDamage(damage);           
+        }
+    }
+
     // Attack enemy
     public void attack(){
         // Generate damage values for player and enemy     
@@ -412,26 +436,7 @@ public class App
 
         if(!enemyAlive()) return;
 
-        // Check for super move
-        if(enemy.equals("Dragon")){
-            if(deadlyAttack == false){
-                if(fireCharge() == false){
-                    // Damage inflicted to player calculation
-                    if(dodge(dodgeChance)) damageTaken = 0;
-                    else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
-                    takeDamage(damageTaken);
-                }
-            } else {
-                System.out.println("\t> Dragon unleashes a deadly fire blast!");
-                if(dodge(dodgeChance)) damageTaken = 0;
-                else fireBlast(50);
-            }
-        } else {
-            // Damage inflicted to player calculation
-            if(dodge(dodgeChance)) damageTaken = 0;
-            else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
-            takeDamage(damageTaken);           
-        }
+        enemyAction(damageTaken, dodgeChance, enemyCritChance + critBonus, false);
     }
 
     // Player uses Guardian Force
@@ -449,21 +454,7 @@ public class App
         int damageDealt = damage(attackDamage, 0, 1);
         int damageTaken = damage(enemyAttackDamage, attackBonus, minAttack)/2;
 
-        // Check for super move
-        if(enemy.equals("Dragon")){
-            if(deadlyAttack == false){
-                if(fireCharge() == false){
-                    // Damage inflicted to player calculation
-                    takeDamage(damageTaken);
-                }
-            } else {
-                System.out.println("\t> Dragon unleashes a deadly fire blast!");
-                fireBlast(25);
-            }
-        } else {
-           // Damage inflicted to player calculation
-           takeDamage(damageTaken); 
-        }
+        enemyAction(damageTaken, 0, 0, true);
 
         if(!playerAlive()) return;
 
@@ -486,26 +477,7 @@ public class App
         int damageDealt = damage(attackDamage, 0, 1);
         int damageTaken = damage(enemyAttackDamage, attackBonus, minAttack);
 
-        // Check for super move
-        if(enemy.equals("Dragon")){
-            if(deadlyAttack == false){
-                if(fireCharge() == false){
-                    // Damage inflicted to player calculation
-                    if(dodge(dodgeChance*3)) damageTaken = 0;
-                    else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
-                    takeDamage(damageTaken);
-                }
-            } else {
-                System.out.println("\t> Dragon unleashes a deadly fire blast!");
-                if(dodge(dodgeChance*3)) damageTaken = 0;
-                else fireBlast(50);
-            }
-        } else {
-             // Damage inflicted to player calculation
-            if(dodge(dodgeChance*3)) damageTaken = 0;
-            else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
-            takeDamage(damageTaken);         
-        }
+        enemyAction(damageTaken, dodgeChance*3, enemyCritChance + critBonus, false);
 
         if(!playerAlive()) return;
 
@@ -536,26 +508,7 @@ public class App
 
         if(!enemyAlive()) return;
 
-        // Check for super move
-        if(enemy.equals("Dragon")){
-            if(deadlyAttack == false){
-                if(fireCharge() == false){
-                    // Damage inflicted to player calculation
-                    if(dodge(dodgeChance)) damageTaken = 0;
-                    else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
-                    takeDamage(damageTaken);
-                }
-            } else {
-                System.out.println("\t> Dragon unleashes a deadly fire blast!");
-                if(dodge(dodgeChance)) damageTaken = 0;
-                else fireBlast(50);
-            }
-        } else {
-            // Damage inflicted to player calculation
-            if(dodge(dodgeChance)) damageTaken = 0;
-            else if(critical(enemyCritChance + critBonus)) damageTaken *= 1.5;
-            takeDamage(damageTaken);           
-        }      
+        enemyAction(damageTaken, dodgeChance, enemyCritChance + critBonus, false);      
     }
 
     // Drink health potion
@@ -608,6 +561,10 @@ public class App
     public boolean run(){
         String input;
         boolean runAway = false;
+        if(enemy.equals("Dragon")){
+            System.out.println("You cannot run away from this battle!");
+            return runAway;
+        }
         if(numRunAttempts > 0){
             while(true){
                 System.out.println("\tYou have " + numRunAttempts + " runs remaining.");
@@ -653,6 +610,11 @@ public class App
             numRunAttempts++;
             System.out.println(" # You have " + numRunAttempts + " runs remaining. #");
             difficulty();
+        }
+        if(numEnemiesDefeated % 10 == 0) {
+            System.out.println(" # Your HP and MP has been completely restored! #");
+            health = maxHealth;
+            mana = maxMana;
         }
     }
 
@@ -712,6 +674,7 @@ public class App
     public int gameOver(){
 
         // Error check for input
+        System.out.println("\nTotal Enemies " + name + " Defeated: " + numEnemiesDefeated);
         String input;
         while(true){
             System.out.println("\nGAME OVER! What would you like to do?");
@@ -732,7 +695,6 @@ public class App
 
     // Exit game
     public void end(){
-        System.out.println("\nTotal Enemies " + name + " Defeated: " + numEnemiesDefeated);
         System.out.println("\n#######################");
         System.out.println("# THANKS FOR PLAYING! #");
         System.out.println("#######################");
