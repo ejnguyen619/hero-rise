@@ -38,6 +38,9 @@ public class App
     int numRunAttempts;
     int criticalChance;
     int dodgeChance;
+    int numEtherPotions;
+    int etherPotionHealAmount;
+    int etherPotionDropChance;
     String name;
     
     public static void main( String[] args )
@@ -79,6 +82,9 @@ public class App
         mana = 50;
         maxHealth = health;
         maxMana = mana;
+        numEtherPotions = 1;
+        etherPotionHealAmount = 25;
+        etherPotionDropChance = 20;
     }
 
     // Game text output
@@ -155,6 +161,8 @@ public class App
 
     // Determine enemy health and monster type
     public void enemyType(){
+        // if(numEnemiesDefeated % 5 == 0 && numEnemiesDefeated > 0) enemy = "Dragon";
+        // else enemy = enemies[rand.nextInt(enemies.length)];
         enemy = enemies[rand.nextInt(enemies.length)];
         System.out.println("\t# " + enemy + " has appeared! #\n");
     }
@@ -178,6 +186,12 @@ public class App
             critBonus = 20;
             dodgeBonus = 30; 
         }
+        // else if(enemy.equals("Dragon")) { 
+        //     healthBonus = 20;
+        //     attackBonus = 20;
+        //     critBonus = 10;
+        //     dodgeBonus = 10; 
+        // }
         else {
             healthBonus = 0;
             attackBonus = 0;
@@ -197,7 +211,7 @@ public class App
     public void fightInfo(){
         System.out.println("\t" + name);
         System.out.println("\tHP: " + health + "/" + maxHealth);
-        //System.out.println("\tMP: " + mana + "/" + maxMana);
+        System.out.println("\tMP: " + mana + "/" + maxMana);
         System.out.println("\n\t" + enemy);
         System.out.println("\tHP: " + enemyHealth + "/" + fullEnemyHealth);
         System.out.println("\n\tWhat would you like to do?");
@@ -214,8 +228,8 @@ public class App
         while(true) {
             System.out.println("----------------------------------------");
             System.out.println("\tSkills:");
-            System.out.println("\t1. Guardian Strike");
-            System.out.println("\t2. Counter Force");
+            System.out.println("\t1. Guardian Strike   5MP");
+            System.out.println("\t2. Counter Force     5MP");
             System.out.println("\t3. Cancel");
             input = sc.nextLine();
             if(input.equals("1")){
@@ -241,12 +255,17 @@ public class App
             System.out.println("----------------------------------------");
             System.out.println("\tItems:");
             System.out.println("\t1. Health potion:   " + "x" + numHealthPotions);
-            System.out.println("\t2. Cancel");
+            System.out.println("\t2. Ether potion:    " + "x" + numEtherPotions);
+            System.out.println("\t3. Cancel");
             input = sc.nextLine();
             if(input.equals("1")){
                 healthPotion();
                 break;
             } else if(input.equals("2")){
+                etherPotion();
+                break;
+            }    
+            else if(input.equals("3")){
                 System.out.println("----------------------------------------");
                 break;   
             } 
@@ -267,6 +286,8 @@ public class App
         System.out.println("\n\tItems:");
         System.out.println("\t1. Health Potion:");
         System.out.println("\t   Recovers 30HP.");
+        System.out.println("\t2. Mana Potion:");
+        System.out.println("\t   Recovers 25MP.");
         System.out.println("------------------------------------------------------------------------------------------------------------------------");
     }
 
@@ -346,9 +367,14 @@ public class App
 
     // Player uses Guardian Force
     public void defend(){
+        if(mana < 5) {
+            System.out.println("\t> Insufficient mana! ");
+            return;
+        }
         System.out.println("\t> You used Guardian Strike! ");
         System.out.println("\t> You have taken a defensive stance.");
         System.out.println("\t> Your defense goes up!");
+        mana -= 5;
 
         // Generate damage values for player and enemy     
         int damageDealt = damage(attackDamage, 0, 1);
@@ -365,9 +391,14 @@ public class App
 
     // Player uses Counter Force
     public void counter(){
+        if(mana < 5) {
+            System.out.println("\t> Insufficient mana! ");
+            return;
+        }
         System.out.println("\t> You used Counter Force! ");
         System.out.println("\t> You have taken an evasive stance.");
         System.out.println("\t> Your critical rate goes up!");
+        mana -= 5;
 
         // Generate damage values for player and enemy     
         int damageDealt = damage(attackDamage, 0, 1);
@@ -391,15 +422,15 @@ public class App
 
     // Drink health potion
     public void healthPotion(){
-        if(health == 100) {
-            System.out.println("\t> You have max health!");
+        if(health == maxHealth) {
+            System.out.println("\t> You have max HP!");
             return;
         }
         if(numHealthPotions > 0){
             int difference = 0;
-            if(health > 100 - healthPotionHealAmount){
-                difference = 100 - health;
-                health = 100;
+            if(health > maxHealth - healthPotionHealAmount){
+                difference = maxHealth - health;
+                health = maxHealth;
             } else {
                 health += healthPotionHealAmount;
             }
@@ -409,6 +440,29 @@ public class App
             System.out.println("\t> You have " + numHealthPotions + " health potions left.");
         } else {
             System.out.println("\t> You have no health potions! Defeat enemies for a chance to get one!");
+        }
+    }
+
+    // Drink ether potion
+    public void etherPotion(){
+        if(mana == maxMana) {
+            System.out.println("\t> You have max MP!");
+            return;
+        }
+        if(numEtherPotions > 0){
+            int difference = 0;
+            if(mana > maxMana - etherPotionHealAmount){
+                difference = maxMana - mana;
+                mana = maxMana;
+            } else {
+                mana += etherPotionHealAmount;
+            }
+            numEtherPotions--;
+            System.out.println("\t> You drink a mana potion, recovering " + ((difference > 0) ? difference : etherPotionHealAmount) + " mana.");
+            System.out.println("\t> You now have " + mana + " MP.");
+            System.out.println("\t> You have " + numEtherPotions + " mana potions left.");
+        } else {
+            System.out.println("\t> You have no mana potions! Defeat enemies for a chance to get one!");
         }
     }
 
@@ -477,6 +531,15 @@ public class App
             System.out.println(" # You now have " + numHealthPotions + " health potion(s). # ");
         }
     }
+
+    // Mana potion drop
+    public void manaDrop(){
+        if(rand.nextInt(100) < etherPotionDropChance){
+            numEtherPotions++;
+            System.out.println(" # The " + enemy + " dropped a mana potion! #");
+            System.out.println(" # You now have " + numEtherPotions + " mana potion(s). # ");
+        }
+    } 
 
     // After combat options
     public int nextAction(){
