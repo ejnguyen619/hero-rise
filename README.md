@@ -13,9 +13,9 @@ All player actions are determined by a set of choices shown on the screen. The p
 
 Relive the nostalgic days of classic RPGs like **FINAL FANTASY** where the main player must progress by defeating enemies in a turn-based system. The enemies become progressingly stronger as more enemies are defeated.
 
-### Skills
+### Skills and Magic
 
-Use powerful skills to gain an edge over the enemy! They are accessed by opening the skills page.
+Use powerful abilities to gain an edge over the enemy! They are accessed by opening the skills or magic page.
 
 ### Damage
 
@@ -33,9 +33,13 @@ If you don't feel confident you can win the battle, it is wise to run away and t
 
 If you need more information about certain skills and items, access the help page.
 
+### Sub-bosses
+
+After every set number of enemies, you will encounter a tough enemy. Give it everything you got and be rewarded for the effort!
+
 ### After Combat
 
-When enemies are defeated in battle, there is the possibility of getting additional items like an extra health potion.  
+When enemies are defeated in battle, there is the possibility of getting additional items.  
 
 
 # Future Updates (No particular order)
