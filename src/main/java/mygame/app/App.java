@@ -43,6 +43,7 @@ public class App
     int etherPotionHealAmount;
     int etherPotionDropChance;
     String name;
+    int score;
     
     public static void main( String[] args )
     {
@@ -87,6 +88,7 @@ public class App
         numEtherPotions = 1;
         etherPotionHealAmount = 25;
         etherPotionDropChance = 20;
+        score = 0;
     }
 
     // Game text output
@@ -368,7 +370,9 @@ public class App
     public boolean playerAlive(){
         if(health < 1) {
             System.out.println("\t> You have taken too much damage. You are too weak to go on!");
+            System.out.println("----------------------------------------");
             System.out.println("You limp out of the dungeon, weak from battle.");
+            score -= 50;
             return false;
         }
         else return true; 
@@ -377,6 +381,8 @@ public class App
     // Check if enemy has no health
     public boolean enemyAlive(){
         if(enemyHealth < 1) {
+            System.out.println("----------------------------------------");
+            System.out.println(" # " + enemy + " was defeated! # ");
             return false;
         }
         else return true; 
@@ -595,10 +601,13 @@ public class App
     // Fight result
     public void fightResult(){
         numEnemiesDefeated++;
-        System.out.println("----------------------------------------");
-        System.out.println(" # " + enemy + " was defeated! # ");
         System.out.print(" # You have defeated " + numEnemiesDefeated + " "); 
         System.out.println((numEnemiesDefeated == 1) ? "enemy so far! # " : "enemies so far! # ");
+
+        // Score calculation
+        if(enemy.equals("Dragon")) score += 200;
+        else score += 100;
+
         if(numEnemiesDefeated == 6){
             System.out.println(" # The dragon's aura filled you with power beyond your understanding. # ");
             System.out.println(" # You have gained the ability to use magic! # ");
@@ -661,6 +670,7 @@ public class App
                 System.out.println("You continue on your adventure!");
                 break;
             } else if(input.equals("2")){
+                System.out.println("----------------------------------------");
                 System.out.println("You exit the dungeon, successful from your adventure!");
                 break;   
             } else {
@@ -675,6 +685,7 @@ public class App
 
         // Error check for input
         System.out.println("\nTotal Enemies " + name + " Defeated: " + numEnemiesDefeated);
+        System.out.println("Your total score is " + score);
         String input;
         while(true){
             System.out.println("\nGAME OVER! What would you like to do?");
