@@ -7,9 +7,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.*;
+import java.awt.*;
 
 public class App 
 {
@@ -19,11 +22,13 @@ public class App
 
     // GUI objects
     JFrame window;
-    JPanel titleScreenPanel, startButtonPanel;
+    JPanel titleScreenPanel, startButtonPanel, mainTextPanel, choiceButtonPanel;
     JLabel titleNameLabel;
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
     Font normalFont = new Font("Times New Roman", Font.PLAIN, 30);
-    JButton startButton;
+    JButton startButton, choice1, choice2, choice3, choice4;
+    JTextArea mainTextArea;
+    TitleScreenHandler tsHandler = new TitleScreenHandler();
 
     // Enemy variables
     String[] enemies = {"Skeleton", "Zombie", "Warrior", "Assassin"};
@@ -82,6 +87,7 @@ public class App
         titleScreenPanel.setBounds(100, 100, 600, 150);
         titleScreenPanel.setBackground(Color.BLACK);
 
+        // Add title text and start button
         titleNameLabel = new JLabel("HERO RISE");
         titleNameLabel.setForeground(Color.WHITE);
         titleNameLabel.setFont(titleFont);
@@ -95,6 +101,7 @@ public class App
         startButton.setForeground(Color.WHITE);
         startButton.setFont(normalFont);
         startButton.setFocusPainted(false);
+        startButton.addActionListener(tsHandler);
 
         titleScreenPanel.add(titleNameLabel);
         startButtonPanel.add(startButton);
@@ -102,11 +109,68 @@ public class App
         window.add(titleScreenPanel);
         window.add(startButtonPanel);
 
+        // Set window parameters
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.getContentPane().setBackground(Color.BLACK);
         window.setLayout(null);
         window.setVisible(true);
+    }
+
+    public void createGameScreen(){
+        titleScreenPanel.setVisible(false);
+        startButtonPanel.setVisible(false);
+
+        // mainTextPanel = new JPanel();
+        // mainTextPanel.setBounds(100, 100, 600, 250);
+        // mainTextPanel.setBackground(Color.BLUE);
+        // window.add(mainTextPanel);
+
+        // mainTextArea = new JTextArea("Text Area for Hero Rise, which contains battle information like player and enemy HP and MP.");
+        // mainTextArea.setBounds(100, 100, 600, 250);
+        // mainTextArea.setBackground(Color.BLACK);
+        // mainTextArea.setForeground(Color.WHITE);
+        // mainTextArea.setFont(normalFont);
+        // mainTextArea.setLineWrap(true);
+        // mainTextPanel.add(mainTextArea);
+
+        // choiceButtonPanel = new JPanel();
+        // choiceButtonPanel.setBounds(250, 350, 300, 150);
+        // choiceButtonPanel.setBackground(Color.RED);
+        // choiceButtonPanel.setLayout(new GridLayout(4,1));
+        // window.add(choiceButtonPanel);
+
+        // choice1 = new JButton("Choice 1");
+        // choice1.setBackground(Color.BLACK);
+        // choice1.setForeground(Color.WHITE);
+        // choice1.setFont(normalFont);
+        // choiceButtonPanel.add(choice1);
+
+        // choice2 = new JButton("Choice 2");
+        // choice2.setBackground(Color.BLACK);
+        // choice2.setForeground(Color.WHITE);
+        // choice2.setFont(normalFont);
+        // choiceButtonPanel.add(choice2);
+
+        // choice3 = new JButton("Choice 3");
+        // choice3.setBackground(Color.BLACK);
+        // choice3.setForeground(Color.WHITE);
+        // choice3.setFont(normalFont);
+        // choiceButtonPanel.add(choice3);
+
+        // choice4 = new JButton("Choice 4");
+        // choice4.setBackground(Color.BLACK);
+        // choice4.setForeground(Color.WHITE);
+        // choice4.setFont(normalFont);
+        // choiceButtonPanel.add(choice4);
+    }
+
+    public class TitleScreenHandler implements ActionListener{
+
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            createGameScreen();
+        }
     }
 
     // Initialize variables
