@@ -2,17 +2,28 @@ package mygame.app;
 
 import java.util.Random;
 import java.util.Scanner;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import java.awt.Color;
-import java.awt.Container;
+import java.awt.Font;
 
 public class App 
 {
     // System objects
     Scanner sc;
     Random rand;
+
+    // GUI objects
     JFrame window;
-    Container con;
+    JPanel titleScreenPanel, startButtonPanel;
+    JLabel titleNameLabel;
+    Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
+    Font normalFont = new Font("Times New Roman", Font.PLAIN, 30);
+    JButton startButton;
 
     // Enemy variables
     String[] enemies = {"Skeleton", "Zombie", "Warrior", "Assassin"};
@@ -64,7 +75,33 @@ public class App
 
     public App(){
         // Create window for game
-        JFrame window = new JFrame();
+        window = new JFrame();
+
+        // Create title screen
+        titleScreenPanel = new JPanel();
+        titleScreenPanel.setBounds(100, 100, 600, 150);
+        titleScreenPanel.setBackground(Color.BLACK);
+
+        titleNameLabel = new JLabel("HERO RISE");
+        titleNameLabel.setForeground(Color.WHITE);
+        titleNameLabel.setFont(titleFont);
+
+        startButtonPanel = new JPanel();
+        startButtonPanel.setBounds(300, 400, 200, 100);
+        startButtonPanel.setBackground(Color.BLACK);
+
+        startButton = new JButton("START");
+        startButton.setBackground(Color.BLACK);
+        startButton.setForeground(Color.WHITE);
+        startButton.setFont(normalFont);
+        startButton.setFocusPainted(false);
+
+        titleScreenPanel.add(titleNameLabel);
+        startButtonPanel.add(startButton);
+
+        window.add(titleScreenPanel);
+        window.add(startButtonPanel);
+
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.getContentPane().setBackground(Color.BLACK);
