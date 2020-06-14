@@ -2,12 +2,17 @@ package mygame.app;
 
 import java.util.Random;
 import java.util.Scanner;
+import javax.swing.JFrame;
+import java.awt.Color;
+import java.awt.Container;
 
 public class App 
 {
     // System objects
     Scanner sc;
     Random rand;
+    JFrame window;
+    Container con;
 
     // Enemy variables
     String[] enemies = {"Skeleton", "Zombie", "Warrior", "Assassin"};
@@ -49,12 +54,22 @@ public class App
     {
         // Start adventure
         App game = new App();
-        while(true){
-            game.setup();
-            game.start();
-            if(game.gameOver() == 2) break;
-        }
-        game.end();
+        // while(true){
+        //     game.setup();
+        //     game.start();
+        //     if(game.gameOver() == 2) break;
+        // }
+        // game.end();
+    }
+
+    public App(){
+        // Create window for game
+        JFrame window = new JFrame();
+        window.setSize(800, 600);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.getContentPane().setBackground(Color.BLACK);
+        window.setLayout(null);
+        window.setVisible(true);
     }
 
     // Initialize variables
