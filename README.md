@@ -7,7 +7,7 @@ An adventure Role Playing Game (RPG) in Java. The goal is to defeat as many enem
   
 ## Player Input
 
-All player actions are determined by a set of choices shown on the screen. The player must make a choice by entering the corresponding number.
+All player actions are determined by a set of choices shown on the screen. The player must make a choice by clicking on the corresponding choice on the GUI.
 
 ## Combat
 
@@ -55,10 +55,6 @@ Focus on story-driven events outside of combat to simulate an adventure.
 ## Refine gameplay system
 
 This consists of many features that RPGs tend to have. Specific features will be added at later dates.
-
-## Implement GUI
-
-Replace the text-based aspect with a visual such that users can interact with the game with mouse clicks.
 
 ## Security
 
