@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.*;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,14 +16,15 @@ import mygame.app.App.ChoiceHandler;
 public class UI {
 
     JFrame window;
-    JPanel titleScreenPanel, startButtonPanel, mainTextPanel, choiceButtonPanel, playerPanel;
-    JLabel titleNameLabel, hpLabel, hpLabelNumber, mpLabel, mpLabelNumber;
+    JPanel titleScreenPanel, startButtonPanel, mainTextPanel, choiceButtonPanel, playerPanel, imagePanel;
+    JLabel titleNameLabel, hpLabel, hpLabelNumber, mpLabel, mpLabelNumber, imageLabel;
     JButton startButton;
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
-    Font normalFont = new Font("Times New Roman", Font.PLAIN, 30);
-    Font helpFont = new Font("Times New Roman", Font.PLAIN, 25);
+    Font normalFont = new Font("Times New Roman", Font.PLAIN, 25);
+    Font helpFont = new Font("Times New Roman", Font.PLAIN, 20);
     JButton[] choices = new JButton[6];
     JTextArea mainTextArea;
+    ImageIcon image;
 
     public void createUI(ChoiceHandler cHandler){
 
@@ -71,12 +73,12 @@ public class UI {
         startButtonPanel.setVisible(false);
 
         mainTextPanel = new JPanel();
-        mainTextPanel.setBounds(100, 100, 600, 250);
+        mainTextPanel.setBounds(50, 350, 430, 250);
         mainTextPanel.setBackground(Color.BLACK);
         window.add(mainTextPanel);
 
         mainTextArea = new JTextArea("Text Area for Hero Rise, which contains battle information.");
-        mainTextArea.setBounds(100, 100, 600, 250);
+        mainTextArea.setBounds(50, 350, 430, 250);
         mainTextArea.setBackground(Color.BLACK);
         mainTextArea.setForeground(Color.WHITE);
         mainTextArea.setFont(normalFont);
@@ -85,7 +87,7 @@ public class UI {
         mainTextPanel.add(mainTextArea);
 
         choiceButtonPanel = new JPanel();
-        choiceButtonPanel.setBounds(250, 350, 300, 150);
+        choiceButtonPanel.setBounds(500, 350, 250, 150);
         choiceButtonPanel.setBackground(Color.BLACK);
         choiceButtonPanel.setLayout(new GridLayout(6,1));
         window.add(choiceButtonPanel);
@@ -129,5 +131,16 @@ public class UI {
         mpLabelNumber.setFont(normalFont);
         mpLabelNumber.setForeground(Color.WHITE);
         playerPanel.add(mpLabelNumber);
+
+        // Add image
+        imagePanel = new JPanel();
+        imagePanel.setBounds(100, 100, 600, 230);
+        imagePanel.setBackground(Color.BLACK);
+
+        imageLabel = new JLabel();
+        image = new ImageIcon();
+        imageLabel.setIcon(image);
+        imagePanel.add(imageLabel);
+        window.add(imagePanel);
     }
 }

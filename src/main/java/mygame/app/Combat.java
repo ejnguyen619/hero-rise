@@ -1,5 +1,7 @@
 package mygame.app;
 
+import javax.swing.ImageIcon;
+
 import mygame.app.Enemy.*;
 
 public class Combat {
@@ -8,10 +10,12 @@ public class Combat {
     UI ui;
     Player player = new Player();
     SuperMonster monster;
+    Audio audio;
 
-    public Combat(App app, UI ui){
+    public Combat(App app, UI ui, Audio audio){
         this.app = app;
         this.ui = ui;
+        this.audio = audio;
     }
 
     public void defaultSetup(){
@@ -272,14 +276,23 @@ public class Combat {
         ui.mainTextArea.setText("You limp out of the dungeon, weak from battle. \n\nGAME OVER!\n\nWhat would you like to do?");
         buttonChoice("Try again!", "Exit game", "", "", "", "");
         nextPosition("reset", "end", "", "", "", "");
+        audio.stop();
+        audio.setFile(audio.path + "lose.wav");
+        audio.play();
     }
 
     // Exit game
     public void end(){
-        ui.mainTextArea.setText("Final Score: " + player.score + "\n\nTHANKS FOR PLAYING!");
+        ui.mainTextArea.setText("Final Score: " + player.score);
+        ui.image = new ImageIcon(".//res//Images//end.jpg");
+        ui.imageLabel.setIcon(ui.image);
         buttonChoice("", "", "", "", "", "");
         nextPosition("", "", "", "", "", "");
         ui.choiceButtonPanel.setVisible(false);
+        audio.stop();
+        audio.setFile(audio.path + "credits.wav");
+        audio.play();
+        audio.loop();
     }
 
     // Enemy dead
@@ -304,6 +317,9 @@ public class Combat {
         ui.mainTextArea.setText(monster.name + " was defeated!\n" + output);
         buttonChoice("Result", "", "", "", "", "");
         nextPosition("fightResult", "", "", "", "", "");
+        audio.stop();
+        audio.setFile(audio.path + "win.wav");
+        audio.play();
     }
 
     // Fight result
@@ -319,7 +335,11 @@ public class Combat {
 
     // Determine enemy health and monster type
     public void enemyType(){
-        if(player.numEnemiesDefeated % 5 == 0 && player.numEnemiesDefeated > 0) monster = new Dragon();
+        String path;
+        if(player.numEnemiesDefeated % 5 == 0 && player.numEnemiesDefeated > 0) { 
+            monster = new Dragon();
+            path = audio.path + "battle-boss.wav";
+        }
         else {
             switch(app.rand.nextInt(4)){
                 case 0: monster = new Skeleton(); break;
@@ -327,7 +347,14 @@ public class Combat {
                 case 2: monster = new Warrior(); break;
                 case 3: monster = new Assassin(); break;
             }
+            path = audio.path + "battle.wav";
         }
+        audio.stop();
+        audio.setFile(path);
+        audio.play();
+        audio.loop();
+        ui.image = new ImageIcon(monster.imagePath);
+        ui.imageLabel.setIcon(ui.image);
         monster.difficulty(player.numEnemiesDefeated);
         String pronoun = (monster.name == "Assassin") ? "An" : "A";
         String runAway = (monster.name == "Dragon") ? "\n\nYOU CANNOT RUN AWAY FROM THIS FIGHT!" : "";
@@ -336,8 +363,10 @@ public class Combat {
 
     // Generate enemy health
     public void generateEnemyHP(){
-        monster.enemyHealth = 0;
-        while(monster.enemyHealth < monster.minHealth) monster.enemyHealth = app.rand.nextInt(monster.maxEnemyHealth) + monster.healthBonus;
+        while(true){
+            monster.enemyHealth = app.rand.nextInt(monster.maxEnemyHealth) + monster.healthBonus;
+            if(monster.enemyHealth >= monster.minHealth && monster.enemyHealth <= monster.maxEnemyHealth && monster.enemyHealth > 0) break;
+        }
         monster.fullEnemyHealth = monster.enemyHealth;
     }
 

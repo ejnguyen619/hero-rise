@@ -9,8 +9,9 @@ public class App
 {
     ChoiceHandler choiceHandler = new ChoiceHandler();
     UI ui = new UI();
-    Combat combat = new Combat(this,ui);
     String[] nextPosition = new String[6];
+    Audio audio = new Audio();
+    Combat combat = new Combat(this,ui, audio);
 
     // System objects
     Random rand = new Random();
@@ -24,6 +25,9 @@ public class App
 
     public App(){
         ui.createUI(choiceHandler);
+        audio.setFile(audio.path + "opening.wav");
+        audio.play();
+        audio.loop();
     }
 
     // Execute function based on nextPosition

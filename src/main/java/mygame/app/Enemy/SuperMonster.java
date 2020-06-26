@@ -3,6 +3,7 @@ package mygame.app.Enemy;
 public class SuperMonster {
 
     public String name;
+    public String imagePath = ".//res//Images//";
     public int maxEnemyHealth;
     public int enemyAttackDamage;
     public int enemyHealth;
@@ -43,7 +44,7 @@ public class SuperMonster {
     // Increase difficulty as more enemies are defeated
     public void difficulty(int numberEnemies){
         int set = numberEnemies;
-        while(set % 5 == 0 && numberEnemies > 0){
+        while(set % 5 == 0 && set >= 5){
             maxEnemyHealth += 5;
             enemyAttackDamage += 5;
             enemyCritChance += 5;
