@@ -20,8 +20,10 @@ public class Combat {
 
     public void defaultSetup(){
         player.reset();
-        ui.hpLabelNumber.setText("" + player.health + "/" + player.maxHealth);
-        ui.mpLabelNumber.setText("" + player.mana + "/" + player.maxMana);
+        ui.healthBar.setValue(player.health);
+        ui.manaBar.setValue(player.mana);
+        ui.hpLabelNumber.setText(player.health + "/" + player.maxHealth);
+        ui.mpLabelNumber.setText(player.mana + "/" + player.maxMana);
         encounter();
     }
 
@@ -152,7 +154,8 @@ public class Combat {
             if(player.mana < 5) return;
             player.defend();
             ui.mainTextArea.setText("You used Guardian Strike!\n\nYou have taken a defensive stance.");
-            ui.mpLabelNumber.setText("" + player.mana + "/" + player.maxMana);
+            ui.manaBar.setValue(player.mana);
+            ui.mpLabelNumber.setText(player.mana + "/" + player.maxMana);
             nextPosition("defend-enemyAction", "", "", "", "", "");
         }
         // Attack after enemy attack 
@@ -172,7 +175,8 @@ public class Combat {
             if(player.mana < 5) return;
             player.counter();
             ui.mainTextArea.setText("You used Counter Force!\n\nYou have taken an evasive stance.");
-            ui.mpLabelNumber.setText("" + player.mana + "/" + player.maxMana);
+            ui.manaBar.setValue(player.mana);
+            ui.mpLabelNumber.setText(player.mana + "/" + player.maxMana);
             nextPosition("counter-enemyAction", "", "", "", "", "");
         }
         // Attack after enemy attack 
@@ -203,7 +207,8 @@ public class Combat {
         // Generate damage values for player     
         int damageDealt = 25;
         player.fire();
-        ui.mpLabelNumber.setText("" + player.mana + "/" + player.maxMana);
+        ui.manaBar.setValue(player.mana);
+        ui.mpLabelNumber.setText(player.mana + "/" + player.maxMana);
 
         // Damage inflicted to enemy calculation
         monster.setHealth(-damageDealt);
@@ -215,7 +220,8 @@ public class Combat {
     public void healthPotion(){
         if(player.healthPotion()){
             ui.mainTextArea.setText("Health potion:   " + "x" + player.numHealthPotions + "\nEther potion:    " + "x" + player.numEtherPotions);
-            ui.hpLabelNumber.setText("" + player.health + "/" + player.maxHealth);
+            ui.healthBar.setValue(player.health);
+            ui.hpLabelNumber.setText(player.health + "/" + player.maxHealth);
         }
     }
 
@@ -223,7 +229,8 @@ public class Combat {
     public void etherPotion(){
         if(player.etherPotion()){
             ui.mainTextArea.setText("Health potion:   " + "x" + player.numHealthPotions + "\nEther potion:    " + "x" + player.numEtherPotions);
-            ui.mpLabelNumber.setText("" + player.mana + "/" + player.maxMana);
+            ui.manaBar.setValue(player.mana);
+            ui.mpLabelNumber.setText(player.mana + "/" + player.maxMana);
         }
     }
 
@@ -283,7 +290,7 @@ public class Combat {
 
     // Exit game
     public void end(){
-        ui.mainTextArea.setText("Final Score: " + player.score);
+        ui.mainTextArea.setText(ui.jtf.getText() + "'s Final Score: " + player.score);
         ui.image = new ImageIcon(".//res//Images//end.jpg");
         ui.imageLabel.setIcon(ui.image);
         buttonChoice("", "", "", "", "", "");
@@ -310,8 +317,10 @@ public class Combat {
             output += "\nYour HP and MP has been completely restored!";
             player.setHealth(player.maxHealth - player.health);
             player.setMana(player.maxMana - player.mana);
-            ui.hpLabelNumber.setText("" + player.health + "/" + player.maxHealth);
-            ui.mpLabelNumber.setText("" + player.mana + "/" + player.maxMana); 
+            ui.healthBar.setValue(player.health);
+            ui.manaBar.setValue(player.mana);
+            ui.hpLabelNumber.setText(player.health + "/" + player.maxHealth);
+            ui.mpLabelNumber.setText(player.mana + "/" + player.maxMana); 
         }
 
         ui.mainTextArea.setText(monster.name + " was defeated!\n" + output);
@@ -404,7 +413,8 @@ public class Combat {
         String hitByEnemy = (monster.enemyHit)  ? "HIT!" : "MISS!";
         String critByEnemy = (monster.enemyCrit && monster.enemyHit) ? "\nCRITICAL!\n" : "";
         ui.mainTextArea.setText(fireBlast + hitByEnemy + "\n" + critByEnemy + "\nThe " + monster.name + " dealt you " + damage + " damage.");
-        ui.hpLabelNumber.setText("" + player.health + "/" + player.maxHealth);
+        ui.healthBar.setValue(player.health);
+        ui.hpLabelNumber.setText(player.health + "/" + player.maxHealth);
     }
 
     // Health potion drop
