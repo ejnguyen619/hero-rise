@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.*;
 
-import java.awt.event.*;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,8 +14,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import mygame.app.App.ChoiceHandler;
+import mygame.app.App.KeyHandler;
 
-public class UI {
+public class Layout {
 
     JFrame window;
     JPanel titleScreenPanel, startButtonPanel, mainTextPanel, choiceButtonPanel, playerPanel, hpPanel, mpPanel, imagePanel, healthBarPanel, manaBarPanel, msgPanel;
@@ -30,10 +29,9 @@ public class UI {
     JTextArea mainTextArea;
     ImageIcon image;
     JTextField jtf;
-    KeyHandler key = new KeyHandler();
     JProgressBar healthBar, manaBar;
 
-    public void createUI(ChoiceHandler cHandler){
+    public void createStartScreen(ChoiceHandler cHandler, KeyHandler kHandler){
 
         // Create window for game
         window = new JFrame();
@@ -43,7 +41,7 @@ public class UI {
         titleScreenPanel.setBounds(100, 100, 600, 150);
         titleScreenPanel.setBackground(Color.BLACK);
 
-        titleNameLabel = new JLabel("HERO RISE");
+        titleNameLabel = new JLabel();
         titleNameLabel.setForeground(Color.WHITE);
         titleNameLabel.setFont(titleFont);
 
@@ -56,7 +54,6 @@ public class UI {
         msgLabel = new JLabel();
         msgLabel.setForeground(Color.WHITE);
         msgLabel.setFont(normalFont);
-        msgLabel.setText("Please enter your name");
         msgPanel.add(msgLabel);
 
         // Add start button
@@ -68,10 +65,10 @@ public class UI {
         // Create user input text box
         jtf = new JTextField();
         jtf.setFont(normalFont);
-        jtf.addKeyListener(key);
+        jtf.addKeyListener(kHandler);
         startButtonPanel.add(jtf);
 
-        startButton = new JButton("START");
+        startButton = new JButton();
         startButton.setBackground(Color.BLACK);
         startButton.setForeground(Color.WHITE);
         startButton.setFont(normalFont);
@@ -139,41 +136,19 @@ public class UI {
 
         // Create Health Bar
         healthBarPanel = new JPanel();
-        healthBarPanel.setBounds(100,15,250,30);
-        healthBarPanel.setBackground(Color.BLACK);
-        healthBarPanel.setLayout(new GridLayout(1,2));
-        window.add(healthBarPanel);
-
-        hpLabel = new JLabel("HP:");
-        hpLabel.setFont(normalFont);
-        hpLabel.setForeground(Color.WHITE);
-        healthBarPanel.add(hpLabel);
-
+        hpLabel = new JLabel();
         healthBar = new JProgressBar(0,100);
-        healthBar.setPreferredSize(new Dimension(200,30));
         healthBar.setBackground(Color.RED);
         healthBar.setForeground(Color.GREEN);
-        healthBar.setValue(100);
-        healthBarPanel.add(healthBar);
+        playerBarPanel(healthBarPanel, hpLabel, healthBar, 100);
 
         // Create Mana Bar
         manaBarPanel = new JPanel();
-        manaBarPanel.setBounds(450,15,250,30);
-        manaBarPanel.setBackground(Color.BLACK);
-        manaBarPanel.setLayout(new GridLayout(1,2));
-        window.add(manaBarPanel);
-
-        mpLabel = new JLabel("MP:");
-        mpLabel.setFont(normalFont);
-        mpLabel.setForeground(Color.WHITE);
-        manaBarPanel.add(mpLabel);
-
+        mpLabel = new JLabel();
         manaBar = new JProgressBar(0,50);
-        manaBar.setPreferredSize(new Dimension(200,30));
         manaBar.setBackground(Color.WHITE);
         manaBar.setForeground(Color.BLUE);
-        manaBar.setValue(50);
-        manaBarPanel.add(manaBar);
+        playerBarPanel(manaBarPanel, mpLabel, manaBar, 450);
 
         // Add image
         imagePanel = new JPanel();
@@ -188,43 +163,46 @@ public class UI {
 
         // Add numerical text boxes for HP and MP
         hpPanel = new JPanel();
-        hpPanel.setBounds(225, 45, 125, 25);
-        hpPanel.setBackground(Color.BLACK);
-        window.add(hpPanel);
-
         hpLabelNumber = new JLabel();
-        hpLabelNumber.setForeground(Color.WHITE);
-        hpLabelNumber.setFont(helpFont);
-        hpPanel.add(hpLabelNumber);
+        playerTextPanel(hpPanel, hpLabelNumber, 225);
 
         mpPanel = new JPanel();
-        mpPanel.setBounds(575, 45, 125, 25);
-        mpPanel.setBackground(Color.BLACK);
-        window.add(mpPanel);
-
         mpLabelNumber = new JLabel();
-        mpLabelNumber.setForeground(Color.WHITE);
-        mpLabelNumber.setFont(helpFont);
-        mpPanel.add(mpLabelNumber); 
+        playerTextPanel(mpPanel, mpLabelNumber, 575);
     }
 
-    // Handle user input for name in title screen
-    public class KeyHandler implements KeyListener{
+    // Set up player bar panel
+    public void playerBarPanel(JPanel panel, JLabel label, JProgressBar bar, int panelx){
+        panel.setBounds(panelx,15,250,30);
+        panel.setBackground(Color.BLACK);
+        panel.setLayout(new GridLayout(1,2));
+        window.add(panel);
 
-        @Override
-        public void keyPressed(KeyEvent e) {  
-        }
+        label.setFont(normalFont);
+        label.setForeground(Color.WHITE);
+        panel.add(label);
 
-        @Override
-        public void keyTyped(KeyEvent e) { 
-        }
+        bar.setPreferredSize(new Dimension(200,30));
+        bar.setValue(100);
+        panel.add(bar);        
+    }
 
-        @Override
-        public void keyReleased(KeyEvent e) {
-            if(jtf.getText().length() > 0)
-                startButton.setEnabled(true);
-            else
-                startButton.setEnabled(false);
-        }
+    // Set up player text panel
+    public void playerTextPanel(JPanel panel, JLabel label, int panelx){
+        panel.setBounds(panelx, 45, 125, 25);
+        panel.setBackground(Color.BLACK);
+        window.add(panel);
+
+        label.setForeground(Color.WHITE);
+        label.setFont(helpFont);
+        panel.add(label);        
+    }
+
+    // Toggle start button status based on user name input
+    public void name(){
+        if(jtf.getText().length() > 0)
+            startButton.setEnabled(true);
+        else
+            startButton.setEnabled(false);
     }
 }

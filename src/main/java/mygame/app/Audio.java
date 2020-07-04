@@ -10,6 +10,7 @@ public class Audio {
     
     Clip clip;
     String path = ".//res//Music//";
+    boolean active = false;
         
     public void setFile(String soundFileName){
 
@@ -25,8 +26,11 @@ public class Audio {
     }
 
     public void play(){
-        clip.setFramePosition(0);
-        clip.start();
+        if(!active){
+            active = true;
+            clip.setFramePosition(0);
+            clip.start();
+        }
     }
 
     public void loop(){
@@ -34,7 +38,17 @@ public class Audio {
     }
 
     public void stop(){
-        clip.stop();
-        clip.close();
+        if(active){
+            active = false;
+            clip.stop();
+            clip.close();
+        }
+    }
+
+    public void playClip(String path, String loop){
+        stop();
+        setFile(path);
+        play();
+        if(loop == "loop") loop();
     }
 }

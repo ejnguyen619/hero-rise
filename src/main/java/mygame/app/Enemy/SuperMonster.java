@@ -1,5 +1,7 @@
 package mygame.app.Enemy;
 
+import mygame.app.App;
+
 public class SuperMonster {
 
     public String name;
@@ -21,7 +23,7 @@ public class SuperMonster {
     public boolean enemyCrit;
 
     // Initial Enemy Stats
-    public void reset(){
+    public void reset() {
         maxEnemyHealth = 75;
         enemyAttackDamage = 25;
         enemyCritChance = 10;
@@ -34,7 +36,7 @@ public class SuperMonster {
     }
 
     // Assign extra stats based on type of enemy
-    public void bonusStats(int health, int attack, int crit, int dodge){
+    public void bonusStats(int health, int attack, int crit, int dodge) {
         healthBonus = health;
         attackBonus = attack;
         critBonus = crit;
@@ -42,9 +44,9 @@ public class SuperMonster {
     }
 
     // Increase difficulty as more enemies are defeated
-    public void difficulty(int numberEnemies){
+    public void difficulty(int numberEnemies) {
         int set = numberEnemies;
-        while(set % 5 == 0 && set >= 5){
+        while (set % 5 == 0 && set >= 5) {
             maxEnemyHealth += 5;
             enemyAttackDamage += 5;
             enemyCritChance += 5;
@@ -52,6 +54,15 @@ public class SuperMonster {
             minAttack += 2;
             set -= 5;
         }
+    }
+
+    // Generate enemy health
+    public void generateEnemyHP() {
+        while (true) {
+            enemyHealth = App.rand.nextInt(maxEnemyHealth) + healthBonus;
+            if(enemyHealth >= minHealth && enemyHealth <= maxEnemyHealth && enemyHealth > 0) break;
+        }
+        fullEnemyHealth = enemyHealth;
     }
 
     // Set hit and crit parameters
