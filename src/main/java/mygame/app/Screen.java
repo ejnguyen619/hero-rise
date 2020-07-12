@@ -84,6 +84,40 @@ public class Screen {
         }
     }
 
+    // Print button choices based on subscreen
+    public void buttonChoice(String screen){
+        int x = 0;
+        for(int i = 0; i < layout.choices.length; i++){
+            String button = player.getName(screen, i);
+            if(button == "") {
+                layout.choices[i].setText("Cancel");
+                x = i + 1;
+                break;
+            }
+            layout.choices[i].setText(button);
+        }
+        for(int i = x; i < layout.choices.length; i++){
+            layout.choices[i].setText("");
+        }
+    }
+
+    // Determine destination of choices of subscreen
+    public void nextPosition(String screen){
+        int x = 0;
+        for(int i = 0; i < layout.choices.length; i++){
+            String nextPos = player.getKey(screen, i);
+            if(nextPos == "") {
+                app.nextPosition[i] = "fightInfo";
+                x = i + 1;
+                break;
+            }
+            app.nextPosition[i] = nextPos;
+        }
+        for(int i = x; i < layout.choices.length; i++){
+            app.nextPosition[i] = "";
+        }
+    }
+
     // CHOICE METHODS --------------------------------------------------------------------------------------------------------
 
     // Determine action based on next position
@@ -97,15 +131,15 @@ public class Screen {
             case "itemScreen": itemScreen(); break;
             case "helpScreen": help(0); break;
             case "enemyAction": enemyAction(false, player.dodgeChance, monster.enemyCritChance + monster.critBonus); break;
-            case "defend-start": defend(0); break;
+            case "defend-start": useSkill("Guardian Strike"); break;
             case "defend-enemyAction": enemyAction(true, 0, 0); break;
-            case "defend-end": defend(1); break;
-            case "counter-start": counter(0); break;
+            case "defend-end": skillEffect("Guardian Strike"); break;
+            case "counter-start": useSkill("Counter Force"); break;
             case "counter-enemyAction": enemyAction(false, player.dodgeChance*4, monster.enemyCritChance + monster.critBonus); break;
-            case "counter-end": counter(1); break;
-            case "fire": fire(); break;
-            case "healthPotion": healthPotion(); break;
-            case "etherPotion": etherPotion(); break;
+            case "counter-end": skillEffect("Counter Force"); break;
+            case "fire": useMagic("Fire"); break;
+            case "healthPotion": useItem("Health Potion"); break;
+            case "etherPotion": useItem("Mana Potion"); break;
             case "help-skills": help(1); break;
             case "help-items": help(2); break;
             case "help-magic": help(3); break;
@@ -152,23 +186,23 @@ public class Screen {
 
     // Skills screen
     public void skillScreen(){
-        layout.mainTextArea.setText("Guardian Strike:            5MP\nCounter Force:              5MP");
-        buttonChoice("Guardian Strike", "Counter Force", "Cancel", "", "", "");
-        nextPosition("defend-start", "counter-start", "fightInfo", "", "", "");
+        layout.mainTextArea.setText(player.displaySkillInfo());
+        buttonChoice("Skill");
+        nextPosition("Skill"); 
     }
 
     // Magic screen
     public void magicScreen(){
-        layout.mainTextArea.setText("Fire:            10MP");
-        buttonChoice("Fire", "Cancel", "", "", "", "");
-        nextPosition("fire", "fightInfo", "", "", "", "");
+        layout.mainTextArea.setText(player.displayMagicInfo());
+        buttonChoice("Magic");
+        nextPosition("Magic");       
     }
 
     // Items screen
     public void itemScreen(){
-        layout.mainTextArea.setText("Health potion:   " + "x" + player.numHealthPotions + "\nEther potion:    " + "x" + player.numEtherPotions);
-        buttonChoice("Health Potion", "Mana Potion", "Cancel", "", "", "");
-        nextPosition("healthPotion", "etherPotion", "fightInfo", "", "", "");
+        layout.mainTextArea.setText(player.displayItemCount());
+        buttonChoice("Item");
+        nextPosition("Item");
     }
 
     // Check descriptions of skills and items
@@ -181,18 +215,13 @@ public class Screen {
                 layout.mainTextArea.setText("");
                 break;
             case 1:
-                String guardian = "Guardian Strike:\nEnemy attacks first. Player receives half damage. Player attack hits.\n";
-                String counter = "Counter Force:\nPlayer dodge rate up. Enemy attacks first. If enemy attack misses, player performs critical hit.";
-                layout.mainTextArea.setText(guardian + "\n" + counter);
+                layout.mainTextArea.setText(player.displaySkillHelp());
                 break;
             case 2:
-                String health = "Health Potion:\nRecovers 30HP.\n";
-                String mana = "Mana Potion:\nRecovers 25MP.";
-                layout.mainTextArea.setText(health + "\n" + mana);
+                layout.mainTextArea.setText(player.displayItemInfo());
                 break;
             case 3:
-                String fire = "Fire:\nInflicts 25 damage to enemy.";
-                layout.mainTextArea.setText(fire);
+                layout.mainTextArea.setText(player.displayMagicHelp());
                 break;
         }
     
@@ -200,89 +229,91 @@ public class Screen {
         nextPosition("help-skills", "help-items", "help-magic", "fightInfo", "", "");
     }
 
-    // Drink health potion to recover HP
-    public void healthPotion(){
-        if(player.healthPotion()){
-            layout.mainTextArea.setText("Health potion:   " + "x" + player.numHealthPotions + "\nEther potion:    " + "x" + player.numEtherPotions);
-            setPlayerHealth();
-        }
-    }
-
-    // Drink ether potion to recover MP
-    public void etherPotion(){
-        if(player.etherPotion()){
-            layout.mainTextArea.setText("Health potion:   " + "x" + player.numHealthPotions + "\nEther potion:    " + "x" + player.numEtherPotions);
-            setPlayerMana();
-        }
+    // Use item
+    public void useItem(String name){
+        int position = player.checkItem(name);
+        if(position == -1) return;
+        player.useItem(position);
+        layout.mainTextArea.setText(player.displayItemCount());
+        if(name == "Mana Potion") setPlayerMana();
+        else if(name == "Health Potion") setPlayerHealth();
     }
 
     // Attack enemy
     public void attack(){
-        int damageDealt = choices.attack();
+        player.playerTurnOrder = "first";
+        int damageDealt = choices.damage(player.attackDamage, 0, 1);
+        damageDealt = choices.attack(damageDealt);
         damageEnemy(damageDealt);
         buttonChoice(">", "", "", "", "", "");
         nextPosition((monster.enemyHealth < 1) ? "enemyDead" : "enemyAction", "", "", "", "", "");
     }
 
-    // Player uses Guardian Force
-    public void defend(int turn){
-        buttonChoice(">", "", "", "", "", "");
+    // Use skill screen
+    public void useSkill(String name){
+        int position = player.checkSkill(name);
+        if(position == -1) return;
+        if(player.mana < player.skills[position].mpCost) return;
+        player.useSkill(position);
+        layout.mainTextArea.setText("You used " + name + "!\n\n" + player.skills[position].message);
+        setPlayerMana();
 
-        // Prepare for counter attack
-        if(turn == 0){
-            if(player.mana < 5) return;
-            player.defend();
-            layout.mainTextArea.setText("You used Guardian Strike!\n\nYou have taken a defensive stance.");
-            setPlayerMana();
-            nextPosition("defend-enemyAction", "", "", "", "", "");
-        }
-        // Attack after enemy attack 
-        else if(turn == 1){
-            int damageDealt = choices.damage(player.attackDamage, 0, 1);
-            damageEnemy(damageDealt);
-            nextPosition((monster.enemyHealth < 1) ? "enemyDead" : "fightInfo", "", "", "", "", "");
-        }
+        // set button text and location based on skill used
+        switch(name){
+            case "Guardian Strike": 
+                buttonChoice(">", "", "", "", "", ""); 
+                nextPosition("defend-enemyAction", "", "", "", "", ""); 
+                break;
+            case "Counter Force":
+                buttonChoice(">", "", "", "", "", ""); 
+                nextPosition("counter-enemyAction", "", "", "", "", "");             
+                break;
+        }  
     }
 
-    // Player uses Counter Force
-    public void counter(int turn){
-        buttonChoice(">", "", "", "", "", "");
-
-        // Prepare for counter attack
-        if(turn == 0){
-            if(player.mana < 5) return;
-            player.counter();
-            layout.mainTextArea.setText("You used Counter Force!\n\nYou have taken an evasive stance.");
-            setPlayerMana();
-            nextPosition("counter-enemyAction", "", "", "", "", "");
-        }
-        // Attack after enemy attack 
-        else if(turn == 1){
-            int damageDealt = choices.counter();
-            damageEnemy(damageDealt);
-            nextPosition((monster.enemyHealth < 1) ? "enemyDead" : "fightInfo", "", "", "", "", "");
-        }
+    // Skill Aftermath screen
+    public void skillEffect(String name){
+        int damageDealt;
+        switch(name){
+            case "Guardian Strike": 
+                damageDealt = choices.damage(player.attackDamage, 0, 1);
+                damageEnemy(damageDealt);
+                buttonChoice(">", "", "", "", "", ""); 
+                nextPosition((monster.enemyHealth < 1) ? "enemyDead" : "fightInfo", "", "", "", "", "");
+                player.currentSkill = "";
+                break;
+            case "Counter Force":
+                damageDealt = choices.counter();
+                damageEnemy(damageDealt);
+                buttonChoice(">", "", "", "", "", ""); 
+                nextPosition((monster.enemyHealth < 1) ? "enemyDead" : "fightInfo", "", "", "", "", "");
+                player.currentSkill = "";             
+                break;
+        }   
     }
 
-    // Casts fire spell
-    public void fire(){
-        if(player.mana < 10) return;
+    // Casts spell
+    public void useMagic(String name){
+        int position = player.checkSpell(name);
+
+        if(position == -1) return;
+        if(player.mana < player.magic[position].mpCost) return;
 
         // Generate damage values for player     
-        int damageDealt = 25;
-        player.fire();
+        int damageDealt = player.magic[position].damage;
+        player.useMagic(position);
         setPlayerMana();
 
         // Damage inflicted to enemy calculation
         monster.setHealth(-damageDealt);
-        layout.mainTextArea.setText("You cast Fire!\n\nYou strike the " + monster.name + " for " + damageDealt + " damage.");
+        layout.mainTextArea.setText("You cast " + name + "!\n\nYou strike the " + monster.name + " for " + damageDealt + " damage.");
         buttonChoice(">", "", "", "", "", "");
         nextPosition((monster.enemyHealth < 1) ? "enemyDead" : "enemyAction", "", "", "", "", "");
     }
 
     // Player Dead Screen
     public void playerDead(){
-        player.score -= 50;
+        choices.updateScore();
         layout.mainTextArea.setText("You limp out of the dungeon, weak from battle. \n\nGAME OVER!\n\nWhat would you like to do?");
         buttonChoice("Try again!", "Exit game", "", "", "", "");
         nextPosition("reset", "end", "", "", "", "");
@@ -302,12 +333,11 @@ public class Screen {
 
     // Enemy dead
     public void enemyDead(){
-        String output = "";
 
         // Score calculation
-        if(monster.name.equals("Dragon")) player.score += 200;
-        else player.score += 100;
+        choices.updateScore();
 
+        String output = "";
         player.numEnemiesDefeated++;
         output = (player.numEnemiesDefeated == 6) ? output + "\nYou have learned the magic spell Fire!" : output;
 
@@ -327,8 +357,8 @@ public class Screen {
 
     // Fight result
     public void fightResult(){
-        String healthPotion = (choices.healthDrop()) ? ("The " + monster.name + " dropped a health potion!\n\n") : "";
-        String manaPotion = (choices.manaDrop()) ? ("The " + monster.name + " dropped a mana potion!\n\n") : "";
+        String healthPotion = (player.items[player.checkItem("Health Potion")].dropItem()) ? ("The " + monster.name + " dropped a health potion!\n\n") : "";
+        String manaPotion = (player.items[player.checkItem("Mana Potion")].dropItem()) ? ("The " + monster.name + " dropped a mana potion!\n\n") : "";
         String potion = (!healthPotion.equals("") && !manaPotion.equals("")) ? ("The " + monster.name + " dropped a health potion!\n\nThe " + monster.name + " dropped a mana potion!\n\n") : (healthPotion + manaPotion);
         layout.mainTextArea.setText(potion + "What would you like to do now? ");
 

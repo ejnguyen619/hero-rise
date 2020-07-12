@@ -12,6 +12,8 @@ public class Choices {
         this.player = player;
         this.app = app;
     }
+
+    // ENEMY INITIALIZATION METHODS --------------------------------------------------------------------------------------------------------
     
     // Determine monster type
     public SuperMonster enemyType(){
@@ -19,33 +21,24 @@ public class Choices {
             monster = new Dragon();
         }
         else {
-            switch(App.rand.nextInt(4)) {
-                case 0: monster = new Skeleton(); break;
-                case 1: monster = new Zombie(); break;
-                case 2: monster = new Warrior(); break;
-                case 3: monster = new Assassin(); break;
-            }
+            monster = randomMonster();
         }
         return monster;
     }
 
-    // Health potion drop
-    public boolean healthDrop(){
-        if(App.rand.nextInt(100) < player.healthPotionDropChance) {
-            player.numHealthPotions++;
-            return true;
+    // Random monster selection
+    public SuperMonster randomMonster(){
+        SuperMonster mob = null;
+        switch(App.rand.nextInt(4)) {
+            case 0: mob = new Skeleton(); break;
+            case 1: mob = new Zombie(); break;
+            case 2: mob = new Warrior(); break;
+            case 3: mob = new Assassin(); break;
         }
-        return false;
+        return mob;       
     }
 
-    // Mana potion drop
-    public boolean manaDrop(){
-        if(App.rand.nextInt(100) < player.etherPotionDropChance) {
-            player.numEtherPotions++;
-            return true;
-        }
-        return false;
-    }
+    // COMBAT METHODS --------------------------------------------------------------------------------------------------------
 
     // Generate damage value
     public int damage(int baseDamage, int bonus, int min){
@@ -68,10 +61,10 @@ public class Choices {
         else return false;
     }
 
+    // PLAYER METHODS --------------------------------------------------------------------------------------------------------
+
     // Player attack
-    public int attack(){
-        player.playerTurnOrder = "first";
-        int damageDealt = damage(player.attackDamage, 0, 1);
+    public int attack(int damageDealt){
 
         // Damage inflicted to enemy calculation
         if(dodge(monster.enemyDodgeChance + monster.dodgeBonus)) {
@@ -85,21 +78,6 @@ public class Choices {
             player.setHitCrit(true, false);
         }
         return damageDealt;
-    }
-
-    // Enemy attack
-    public int enemyAttack(int damage, int dodge, int crit){
-        if(dodge(dodge)) {
-            monster.setHitCrit(false, false);
-            damage = 0;
-        }
-        else if(critical(crit)){
-            monster.setHitCrit(true, true);
-            damage *= 1.5;
-        } else {
-            monster.setHitCrit(true, false);
-        }
-        return damage;        
     }
 
     // Player counter attack
@@ -121,12 +99,39 @@ public class Choices {
         return damageDealt;       
     }
 
-    // Charge up dragon's super move
-    public boolean fireCharge(){
-        if(App.rand.nextInt(100) < 30) {
-            return true;
-        } 
-        else return false;
+    // Update score
+    public void updateScore(){
+        if(player.health < 1) player.score -= 50;
+        else if(monster.name.equals("Dragon")) player.score += 200;
+        else player.score += 100;
+    }
+
+    // ENEMY METHODS --------------------------------------------------------------------------------------------------------
+
+    // Checks enemy action
+    public int enemyAction(int damage, int dodge, int crit, boolean half){
+        if(monster.name.equals("Dragon")){
+            // Check for super move
+            damage = (monster.deadlyAttack == false) ? dragonAction(damage, dodge, crit, half) : fireBlast(damage, dodge, crit, half);
+        } else {
+            damage = enemyAttack(damage, dodge, crit);          
+        }
+        return damage;
+    }
+
+    // Enemy attack
+    public int enemyAttack(int damage, int dodge, int crit){
+        if(dodge(dodge)) {
+            monster.setHitCrit(false, false);
+            damage = 0;
+        }
+        else if(critical(crit)){
+            monster.setHitCrit(true, true);
+            damage *= 1.5;
+        } else {
+            monster.setHitCrit(true, false);
+        }
+        return damage;        
     }
 
     // Dragon action
@@ -140,6 +145,14 @@ public class Choices {
         return damage;
     }
 
+    // Charge up dragon's super move
+    public boolean fireCharge(){
+        if(App.rand.nextInt(100) < 30) {
+            return true;
+        } 
+        else return false;
+    }
+
     // Dragon uses Fire Blast
     public int fireBlast(int damage, int dodge, int crit, boolean half){
         damage = enemyAttack((!half) ? 50 : 25, dodge, 0);
@@ -147,23 +160,12 @@ public class Choices {
         return damage; 
     }
 
-    // Checks enemy action
-    public int enemyAction(int damage, int dodge, int crit, boolean half){
-        if(monster.name.equals("Dragon")){
-            // Check for super move
-            damage = (monster.deadlyAttack == false) ? dragonAction(damage, dodge, crit, half) : fireBlast(damage, dodge, crit, half);
-        } else {
-            damage = enemyAttack(damage, dodge, crit);          
-        }
-        return damage;
-    }
-
     // Determine next position after enemy attack
     public String enemyNextPosition(){
         if(player.health < 1) return "playerDead";
         if(player.playerTurnOrder == "first") return "fightInfo";
-        if(player.skill == "guardian") return "defend-end";
-        if(player.skill == "counter") return "counter-end";
+        if(player.currentSkill == "guardian") return "defend-end";
+        if(player.currentSkill == "counter") return "counter-end";
         return "";
     }
 }
